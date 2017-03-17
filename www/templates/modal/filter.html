@@ -1,0 +1,51 @@
+<ion-modal-view>
+  <div class="bar bar-header bar-assertive item-input-inset">
+    <div class="title text-center">
+      Filter
+    </div>
+    <button class="button button-clear" ng-click="closeFilterModal()">Close</button>
+  </div>
+  <ion-content class="has-header padding">
+
+    <div class="card" ng-show="type == 'delivery'">
+      <ion-list>
+        <ion-radio ng-model="filter.choice" ng-value="'mda'">Min Delivery Amount</ion-radio>
+        <ion-radio ng-model="filter.choice" ng-value="'dt'">Delivery Time (Low to High)</ion-radio>
+      </ion-list>
+    </div>
+
+    <div class="card" ng-show="type == 'pickup'">
+      <ion-list>
+        <ion-radio ng-model="filter.pickup" ng-value="'pf'">Packing Fee (Low to High)</ion-radio>
+        <ion-radio ng-model="filter.pickup" ng-value="'pt'">Preparation Time (Low to High)</ion-radio>
+      </ion-list>
+    </div>
+
+    <div class="card" ng-show="type == 'dinein'">
+      <ion-list>
+        <ion-radio ng-model="filter.dinein" ng-value="'dt'">Preparation Time (Low to High)</ion-radio>
+      </ion-list>
+    </div>
+
+    <div class="list">
+      <div class="item item-toggle">
+        Veg Only Restaurant
+        <label class="toggle toggle-balanced">
+          <input type="checkbox" ng-model="filter.veg_only">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="list">
+      <ion-item class="assertive">Cuisines</ion-item>
+      <ion-list>
+        <ion-checkbox ng-repeat="cuisine in filter.cuisines" ng-model="cuisine.check">{{ cuisine.title }}</ion-checkbox>
+      </ion-list>
+    </div>
+    <button class="button button-balanced button-block" ng-click="applyFilter()">Apply</button>
+    <button class="button button-assertive button-block" ng-show="filter.status" ng-click="clearFilter()">Clear Filter</button>
+  </ion-content>
+</ion-modal-view>

@@ -1,0 +1,24 @@
+<ion-view title="{{ category.title }}">
+  <ion-floating-button ng-click="category.show_search=!category.show_search; category.search.title = '';" has-footer="true" button-color="#ef473a" icon="ion-search" icon-color="#fff">
+  </ion-floating-button>
+  <ion-content>
+    <ion-list>
+      <label class="item item-input" ng-show="category.show_search" >
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="text" placeholder="Search by Product Name" ng-model="category.search.title">
+      </label>
+      <div ng-click="quantityPopup(product)" class="item item-icon-right" ng-repeat="product in category.products |filter: category.search.title">
+        <div class="row">
+          <div class="col-75">
+            <b class="positive">{{ product.title.substr(0, 30) }}</b>
+          </div>
+          <div class="col-25">
+            <i class="fa fa-inr"></i>
+            <span class="assertive" ng-if="product.price!=product.mrp" style="text-decoration: line-through;">{{ product.mrp }}</span> <span class="balanced">{{ product.price }}</span>
+          </div>
+        </div>
+        <i class="icon ion-ios-arrow-right dark"></i>
+      </div>
+    </ion-list>
+  </ion-content>
+</ion-view>

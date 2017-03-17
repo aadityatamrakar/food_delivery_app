@@ -1,0 +1,26 @@
+<ion-view title="Wallet">
+  <ion-content>
+
+    <div class="card">
+
+      <center>
+        <div class="item-body">
+          <h5>Available Balance</h5>
+          <h1><i class="fa fa-inr"></i>
+            {{ wallet.bal }}</h1>
+        </div>
+      </center>
+    </div>
+
+    <div class="list list-inset">
+      <ion-item class="item-avatar" ng-repeat="t in wallet.transaction | orderBy: '-created_at'">
+        <img ng-if="t.type == 'paid_for_order' || t.type == 'removed'" ng-src="img/down.png">
+        <img ng-if="t.type == 'added' || t.type == 'cashback_recieved'" ng-src="img/up.png">
+        <h2 style="text-transform: capitalize;">{{ t.type }}</h2>
+        <h3 class="pull-right"><i class="fa fa-inr"></i> {{ t.amount }}</h3>
+        <p>{{ t.created_at }}</p>
+      </ion-item>
+    </div>
+
+  </ion-content>
+</ion-view>

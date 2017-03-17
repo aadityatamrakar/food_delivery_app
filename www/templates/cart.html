@@ -1,0 +1,78 @@
+<ion-view title="Cart Summary">
+  <ion-content class="padding">
+    <div class="card">
+      <ion-item class="assertive">
+        <span class="text-bold">{{ restaurant.name }}</span>
+        <a ng-hide="editable && cart.length>0" class="assertive pull-right" ng-click="edit()"><i class="fa fa-edit"></i> Edit</a>
+        <a ng-show="editable && cart.length>0" class="balanced pull-right" ng-click="edit()">Apply <i class="fa fa-check"></i></a>
+      </ion-item>
+      <ion-item ng-if="type == 'delivery'">Estimated Delivery Time <span class="pull-right cartBlue">{{ restaurant.delivery_time }} Mins</span></ion-item>
+      <ion-item ng-if="type == 'pickup'">Pickup Time <span class="pull-right cartBlue">{{ restaurant.pickup_time }} Mins Approx</span></ion-item>
+      <ion-item ng-if="type == 'dinein'">Preparation Time <span class="pull-right cartBlue">{{ restaurant.dinein_time }} Mins Approx</span></ion-item>
+      <ion-item>
+        <div class="row" style="text-align: left; font-weight: bold;">
+          <div class="col-50">Item</div>
+          <div class="col-25 text-center">Quantity</div>
+          <div class="col-25 text-right">Price</div>
+        </div>
+      </ion-item>
+      <ion-item ng-repeat="item in cart">
+        <div class="row cartBlue">
+          <div class="col-50">
+            <i class="fa fa-trash assertive" ng-if="editable" ng-click="remove(item)"></i>
+            {{ item.title }}
+          </div>
+          <div class="col-25 text-center">
+            <input ng-if="editable" class="myinput" type="number" ng-model="item.quantity" style="text-align: center" />
+            <span ng-hide="editable">{{ item.quantity }}</span>
+          </div>
+          <div class="col-25 text-right">
+            <i class="fa fa-inr"></i> {{ item.quantity*item.price }}
+          </div>
+        </div>
+      </ion-item>
+    </div>
+    <div class="card" ng-if="cart.length>0">
+      <ion-item class="item-body royal" ng-hide="checkout_btn">You are <i class="fa fa-inr"></i> <span ng-bind="away_amt" class="text-bold"></span> away from minimum ordering amount.</ion-item>
+      <ion-item>
+        <span class="pull-left">Total Item{{ cart.length>1?'s':'' }} - {{ cart.length}}</span>
+        <span class="pull-right cartBlue" style="font-weight: bold;"><i class="fa fa-inr"></i> {{ cart_value }}</span>
+      </ion-item>
+      <li class="item item-toggle" ng-show="checkout_btn">
+        Have Coupon ?
+        <label class="toggle toggle-balanced">
+          <input type="checkbox" ng-model="coupon_t" ng-change="coupon_t==false?reset_coupon():''">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </li>
+      <div ng-if="checkout_btn && coupon_t && !coupon.applied" class="item item-input-inset">
+        <label class="item-input-wrapper">
+          <input style="text-transform: uppercase;" type="text" placeholder="Coupon" ng-model="coupon.code">
+        </label>
+        <button class="button button-small button-balanced" ng-click="applyCoupon()">
+          Apply
+        </button>
+      </div>
+      <ion-item ng-if="coupon_t && coupon.cashback_amt != null" class="item-body royal">
+        Cashback of <i class="fa fa-inr"></i> {{ coupon.cashback_amt }} will be credited in your TromBoy account within 24hrs.
+      </ion-item>
+      <ion-item ng-if="coupon_t && coupon.disc_amt != null">
+        <span class="pull-left">Coupon Discount</span>
+        <span class="pull-right assertive" style="font-weight: bold;"><i class="fa fa-minus"></i> <i class="fa fa-inr"></i> {{ coupon.disc_amt }}</span>
+      </ion-item>
+      <ion-item ng-if="type == 'delivery'">Delivery Charge <span class="pull-right cartBlue cartBlue text-bold" ng-if="restaurant.delivery_fee>0"><i class="fa fa-inr"></i> {{ restaurant.delivery_fee }}</span><span class="pull-right assertive text-bold" ng-if="restaurant.delivery_fee==null">Free</span></ion-item>
+      <ion-item ng-if="type != 'dinein'">Packing Charge <span class="pull-right cartBlue cartBlue text-bold" ng-if="restaurant.packing_fee>0"><i class="fa fa-inr"></i> {{ restaurant.packing_fee }}</span><span class="pull-right assertive text-bold" ng-if="restaurant.packing_fee==null">Free</span></ion-item>
+      <ion-item>
+        <span class="pull-left">Wallet Amount</span>
+        <span class="pull-right cartBlue" style="font-weight: bold;">(-) <i class="fa fa-inr"></i> {{ wallet }}</span>
+      </ion-item>
+      <ion-item>
+        <span class="pull-left">Grand Total</span>
+        <span class="pull-right cartBlue" style="font-weight: bold;"><i class="fa fa-inr"></i> {{ gtotal }}</span>
+      </ion-item>
+      <ion-item class="button button-balanced button-block" ng-click="take_address()" ng-show="checkout_btn" style="margin-top: 0px;">Check Out</ion-item>
+    </div>
+  </ion-content>
+</ion-view>

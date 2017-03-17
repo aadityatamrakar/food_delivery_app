@@ -1,0 +1,11 @@
+<div class="item item-input-inset">
+  <i class="fa fa-minus-circle fa-2x" ng-click="decrease_quantity(data.id)"></i>
+  <label class="item-input-wrapper">
+    <input class="text-center" value="1" ng-model="data.quantity" max="20" min="1" type="number" readonly placeholder="Quantity">
+  </label>
+  <i class="fa fa-2x fa-plus-circle" ng-click="increase_quantity(data.id)"></i>
+</div>
+<label class="item item-input">
+  <span class="input-label">Total</span>
+  <span><i class="fa fa-inr"></i> {{ data.price*data.quantity }}</span>
+</label>

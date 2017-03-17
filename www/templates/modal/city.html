@@ -1,0 +1,16 @@
+<ion-modal-view>
+  <div class="bar bar-header item-input-inset">
+    <label class="item-input-wrapper">
+      <i class="icon ion-ios-search placeholder-icon"></i>
+      <input type="search" ng-model="city_query.name" placeholder="City">
+    </label>
+    <button class="button button-clear button-assertive" ng-click="closeCityModal()">
+      Close
+    </button>
+  </div>
+  <ion-content class="has-header">
+    <ion-list>
+      <ion-item ng-repeat="city in cities | filter:city_query" ng-click="selectCity('{{city.id}}', '{{city.name}}')">{{ city.name }}</ion-item>
+    </ion-list>
+  </ion-content>
+</ion-modal-view>

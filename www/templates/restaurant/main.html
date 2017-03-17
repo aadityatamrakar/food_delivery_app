@@ -1,0 +1,10 @@
+<ion-nav-bar class="bar-assertive">
+  <ion-nav-back-button></ion-nav-back-button>
+  <ion-nav-buttons side="left">
+    <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right">
+    <button class="button button-balanced" style="background-color: #9c0000;" ui-sref="app_b.tabs.cart" ng-if="cart_value>0"><i class="fa fa-inr"></i> {{ cart_value }} <i class="icon ion-android-cart"></i></button>
+  </ion-nav-buttons>
+</ion-nav-bar>
+<ion-nav-view name="res_view"></ion-nav-view>

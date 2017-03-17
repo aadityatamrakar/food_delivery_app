@@ -1,0 +1,48 @@
+<ion-side-menus enable-menu-with-back-views="false">
+  <ion-side-menu-content>
+    <ion-nav-bar class="bar-assertive">
+      <ion-nav-back-button>
+      </ion-nav-back-button>
+      <ion-nav-buttons side="left">
+        <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
+        </button>
+      </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-nav-view name="menuContent"></ion-nav-view>
+  </ion-side-menu-content>
+
+  <ion-side-menu side="left">
+    <ion-content>
+      <ion-list>
+        <ion-item style="height:120px; color: #fff; background: -webkit-linear-gradient(to right, #f85032 , #e73827); background: linear-gradient(to right, #f85032 , #e73827);" class="text-center">
+          <i class="fa fa-4x fa-user-circle"></i><br/>
+          <div style="margin-top: 10px;">Hi, <span style="text-transform: capitalize">{{ user.name }}</span></div>
+        </ion-item>
+        <ion-item menu-close href="#/app_b/tabs/main">
+          <i class="fa fa-home" style="font-size: 22px; margin-right: 15px;"></i>
+          Home
+        </ion-item>
+        <ion-item menu-close href="#/app_b/profile">
+          <i class="fa fa-user-circle" style="font-size: 22px; margin-right: 15px;"></i>
+          My Profile
+        </ion-item>
+        <ion-item menu-close href="#">
+          <i class="fa fa-gift" style="font-size: 22px; margin-right: 15px;"></i>
+          Offers
+        </ion-item>
+        <ion-item menu-close href="#/app_b/orders">
+          <i class="fa fa-list-alt" style="font-size: 22px; margin-right: 15px;"></i>
+          Orders
+        </ion-item>
+        <!--<ion-item menu-close href="#">-->
+          <!--<i class="fa fa-barcode" style="font-size: 22px; margin-right: 15px;"></i>-->
+          <!--Nearby Coupons-->
+        <!--</ion-item>-->
+        <ion-item menu-close href="#">
+          <i class="fa fa-info-circle" style="font-size: 22px; margin-right: 15px;"></i>
+          About
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-side-menu>
+</ion-side-menus>

@@ -1,0 +1,104 @@
+<ion-view class="mainbg" title="Restaurants">
+  <ion-nav-buttons side="right">
+    <button class="button" ng-click="search_form_toggle()" style="margin-right: 5px;"><i class="icon ion-search"></i> </button>
+    <button class="button" ng-click="openFilter()"><i class="icon ion-android-options"></i> </button>
+  </ion-nav-buttons>
+  <ion-floating-button ng-if="cart.length>0" ui-sref="app_b.tabs.cart" has-footer="true" button-color="#e42112" icon="ion-android-cart" icon-color="#fff"></ion-floating-button>
+  <ion-content>
+    <ion-list ng-show="filter.status">
+      <ion-item ng-show="filtered.length>0" class="item-divider">Filtered Restaurants ({{ filtered.length }}) <a class="pull-right assertive" ng-click="clearFilter()">Clear Filter</a></ion-item>
+      <div ng-show="search_form" class="list list-inset">
+        <label class="item item-input">
+          <i class="icon ion-search placeholder-icon"></i>
+          <input type="text" placeholder="Search by name & cuisines" ng-model="filtered.name">
+        </label>
+      </div>
+      <div class="card " ng-repeat="restaurant in filtered | filter:filtered.name">
+        <a class="item item-thumbnail-left" ng-click="openRestaurant(restaurant.id, restaurant.name)">
+          <img ng-src="{{ logo_path }}{{ restaurant.logo }}">
+          <h2 class="assertive"><b>{{ restaurant.name }}</b></h2>
+          <p>{{ restaurant.cuisines.join(', ') }}</p>
+          <div class="row" style="font-size: 13px; margin-top: 15px">
+            <div class="col-20">
+              <img width="14px" src="img/veg.jpg" ng-if="restaurant.type == 'Pure Veg'" />
+              <img width="14px" src="img/nveg.jpg" ng-if="restaurant.type != 'Pure Veg'" />
+            </div>
+            <div class="col-40" ng-if="type=='delivery'">
+              <b class="positive"><i class="fa fa-clock-o"></i>
+                {{ restaurant.delivery_time }} Mins</b>
+            </div>
+            <div class="col-40" ng-if="type=='pickup'">
+              <b class="positive"><i class="fa fa-clock-o"></i>
+                {{ restaurant.pickup_time }} Mins</b>
+            </div>
+            <div class="col-50 text-warning" ng-if="type=='delivery'">
+              <b>Min Order <i class="fa fa-inr"></i>
+                {{ restaurant.min_delivery_amt }}</b>
+            </div>
+            <div class="col-50 text-warning" ng-if="type=='pickup'">
+              <b>Packing: <span ng-if="restaurant.packing_fee>0"><i class="fa fa-inr"></i>
+                {{ restaurant.packing_fee }}</span><span ng-if="restaurant.packing_fee==null">FREE</span></b>
+            </div>
+            <div class="col-90 positive" ng-if="type=='dinein'">
+              <b>Preparation Time <i class="fa fa-clock-o"></i>
+                {{ restaurant.dinein_time}} Mins</b>
+            </div>
+          </div>
+        </a>
+      </div>
+    </ion-list>
+    <ion-list ng-hide="filter.status">
+      <ion-item ng-show="restaurants.length>0" class="item-divider">Open Restaurants ({{ restaurants.length }})</ion-item>
+      <div ng-show="search_form" class="list list-inset">
+        <label class="item item-input">
+          <i class="icon ion-search placeholder-icon"></i>
+          <input type="text" placeholder="Search by name & cuisines" ng-model="restaurants.name">
+        </label>
+      </div>
+      <div class="card " ng-repeat="restaurant in restaurants | filter: restaurants.name">
+        <a class="item item-thumbnail-left" ng-click="openRestaurant(restaurant.id, restaurant.name)">
+          <img ng-src="{{ logo_path }}{{ restaurant.logo }}">
+          <h2 class="assertive"><b>{{ restaurant.name }}</b></h2>
+          <p>{{ restaurant.cuisines.join(', ') }}</p>
+          <div class="row" style="font-size: 13px; margin-top: 15px">
+            <div class="col-20">
+              <img width="14px" src="img/veg.jpg" ng-if="restaurant.type == 'Pure Veg'" />
+              <img width="14px" src="img/nveg.jpg" ng-if="restaurant.type != 'Pure Veg'" />
+            </div>
+            <div class="col-40" ng-if="type=='delivery'">
+              <b class="positive"><i class="fa fa-clock-o"></i>
+              {{ restaurant.delivery_time }} Mins</b>
+            </div>
+            <div class="col-40" ng-if="type=='pickup'">
+              <b class="positive"><i class="fa fa-clock-o"></i>
+                {{ restaurant.pickup_time }} Mins</b>
+            </div>
+            <div class="col-50 text-warning" ng-if="type=='delivery'">
+              <b>Min Order <i class="fa fa-inr"></i>
+              {{ restaurant.min_delivery_amt }}</b>
+            </div>
+            <div class="col-50 text-warning" ng-if="type=='pickup'">
+              <b>Packing: <span ng-if="restaurant.packing_fee>0"><i class="fa fa-inr"></i>
+                {{ restaurant.packing_fee }}</span><span ng-if="restaurant.packing_fee==null">FREE</span></b>
+            </div>
+            <div class="col-90 positive" ng-if="type=='dinein'">
+              <b>Preparation Time <i class="fa fa-clock-o"></i>
+                {{ restaurant.dinein_time}} Mins</b>
+            </div>
+          </div>
+        </a>
+      </div>
+    </ion-list>
+    <ion-list ng-hide="filter.status">
+      <ion-item ng-show="closed.length>0" class="item-divider">Closed Restaurants ({{ closed.length }})</ion-item>
+      <div class="card " ng-repeat="restaurant in closed">
+        <a class="item item-thumbnail-left">
+          <img ng-src="{{ logo_path }}{{ restaurant.logo }}">
+          <h2 class="assertive"><b>{{ restaurant.name }}</b></h2>
+          <p>{{ restaurant.cuisines.join(', ') }}</p>
+          <p><b>Closed Now</b></p>
+        </a>
+      </div>
+    </ion-list>
+  </ion-content>
+</ion-view>

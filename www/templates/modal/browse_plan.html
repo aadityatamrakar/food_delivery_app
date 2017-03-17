@@ -1,0 +1,14 @@
+<ion-modal-view>
+  <div class="bar bar-assertive bar-header item-input-inset">
+    <div class="title title-left">Plan</div>
+    <div class="button" ng-click="closeBrowsePlanModal()">Close</div>
+  </div>
+  <ion-content class="has-header">
+    <ion-list>
+      <ion-item ng-repeat="plan in plans">
+        {{ plan.title }}
+        <span class="pull-right">{{ plan.price }}</span>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-modal-view>

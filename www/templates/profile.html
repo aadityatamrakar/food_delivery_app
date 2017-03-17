@@ -1,0 +1,63 @@
+<ion-view view-title="My Profile">
+  <ion-content>
+
+    <div class="card" ng-hide="user.edit">
+      <ion-item class="assertive">Your Details</ion-item>
+      <label class="item item-input" style="text-transform: capitalize;">
+        <span class="input-label">Name</span>
+        {{ user.name}}
+      </label>
+      <label class="item item-input">
+        <span class="input-label">Mobile</span>
+        {{ user.mobile }}
+      </label>
+      <label class="item item-input">
+        <span class="input-label">Email</span>
+        {{ user.email }}
+      </label>
+      <label class="item item-body">
+        <span class="input-label">Address</span>
+        {{ user.address }}
+      </label>
+      <ion-item class="button button-block button-assertive" ng-click="user.edit=!user.edit" style="margin-top: 0;">Edit Details</ion-item>
+    </div>
+
+    <div class="card" ng-show="user.edit">
+      <ion-item class="assertive">Edit Details</ion-item>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Name</span>
+        <input type="text" placeholder="Name" ng-model="user.name" style="text-transform: capitalize;">
+      </label>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Mobile Number</span>
+        <input type="text" placeholder="Mobile Number" readonly ng-model="user.mobile">
+      </label>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Email</span>
+        <input type="text" placeholder="Email" ng-model="user.email">
+      </label>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Address</span>
+        <input type="text" placeholder="Address" ng-model="user.address">
+      </label>
+      <ion-item class="button button-block button-balanced" ng-click="updateProfile()" style="margin-top: 0;">Update Profile</ion-item>
+    </div>
+
+    <div class="card" ng-show="change_pin">
+      <ion-item class="assertive">Change PIN</ion-item>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Old PIN</span>
+        <input type="number" style="-webkit-text-security: disc;" placeholder="Old PIN" ng-model="user.old_pin" id="profile_old_pin" onkeyup="if(document.getElementById('profile_old_pin').value.length == 4){ document.getElementById('profile_new_pin').focus(); }">
+      </label>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">New PIN</span>
+        <input type="number" style="-webkit-text-security: disc;" id="profile_new_pin" placeholder="New PIN" ng-model="user.new_pin" onkeyup="if(document.getElementById('profile_new_pin').value.length == 4){ document.getElementById('profile_new_pin_verify').focus(); }">
+      </label>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Re-enter PIN</span>
+        <input type="number" style="-webkit-text-security: disc;" id="profile_new_pin_verify" placeholder="Re-enter PIN" ng-model="user.new_pin_verify">
+      </label>
+      <ion-item class="button button-block button-balanced" ng-click="changePIN()" style="margin-top: 0;">Change PIN</ion-item>
+    </div>
+  </ion-content>
+</ion-view>

@@ -1,0 +1,40 @@
+<ion-view title="TromBoy" class="">
+  <ion-nav-buttons side="right">
+    <button class="button fa fa-inr round-button" ui-sref="app_b.wallet"> {{ wallet_balance }}</button>
+    <span style="width: 5px;"></span>
+    <button class="button button-icon button-clear ion-android-person" ui-sref="app_b.profile"></button>
+  </ion-nav-buttons>
+  <ion-content>
+    <ion-slide-box auto-play="true" slide-interval="1500" show-pager="true" does-continue="true">
+      <ion-slide>
+        <img ng-src="img/main320x.jpg" width="100%" />
+      </ion-slide>
+      <ion-slide>
+        <img ng-src="img/main320x.jpg" width="100%" />
+      </ion-slide>
+      <ion-slide>
+        <img ng-src="img/main320x.jpg" width="100%" />
+      </ion-slide>
+    </ion-slide-box>
+    <div class="card">
+      <div class="item text-center"><b>SELECT LOCATION</b></div>
+      <div class="item-body">
+        <label class="item item-input" ng-click="openCityModal()">
+          <span class="input-label"><b>City</b></span>
+          <input type="text" placeholder="Select City" ng-model="selected.city.name">
+        </label>
+        <label class="item item-input" ng-click="openAreaModal()">
+          <span class="input-label"><b>Area</b></span>
+          <input type="text" placeholder="Select Area" ng-model="selected.area.name">
+        </label>
+      </div>
+      <div class="item text-center item-balanced" ng-click="selectOrderInfo()"><b>Show Restaurants!</b></div>
+    </div>
+    <!--<ion-tabs class="tabs-icon-top tabs-assertive tabs-color-white">-->
+      <!--<ion-tab title="Food" icon-off="fa fa-mobile-phone" icon-on="fa fa-mobile-phone" href="#/app/tabs/main"></ion-tab>-->
+      <!--<ion-tab title="Recharge" icon-off="fa fa-mobile-phone" icon-on="fa fa-mobile-phone" href="#/app/tabs/earn"></ion-tab>-->
+      <!--<ion-tab title="Earn" icon-off="fa fa-inr " icon-on="fa fa-inr " href="#/app/tabs/account"></ion-tab>-->
+      <!--<ion-tab title="Nearby Coupons" icon-off="fa fa-barcode" icon-on="fa fa-barcode" href="#/app/tabs/account"></ion-tab>-->
+    <!--</ion-tabs>-->
+  </ion-content>
+</ion-view>

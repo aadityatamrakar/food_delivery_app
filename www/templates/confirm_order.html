@@ -1,0 +1,24 @@
+<ion-view view-title="Your Order">
+  <ion-content>
+    <div class="card">
+      <div class="item-body" style="height: 210px; width: 100%;">
+        <center>
+          <i ng-show="order_s == 'WFRA'" class="fa fa-question" style="color:orangered; font-size: 180px;"></i>
+          <i ng-show="order_s == 'PROC'" class="fa fa-clock-o fa-spin fa-fw" style="color:orangered; font-size: 180px;"></i>
+          <i ng-show="order_s == 'DECL'" class="fa fa-times" style="color:orangered; font-size: 180px;"></i>
+          <i ng-show="order_s == 'CNCL'" class="fa fa-times" style="color:green; font-size: 180px;"></i>
+          <i ng-show="order_s == 'CMPT'" class="fa fa-check-circle-o" style="color:green; font-size: 180px;"></i>
+        </center>
+      </div>
+      <ion-item class="item-body text-center text-bold" style="font-size: 20px;" ng-show="run_time">Time Remaining : {{ clock_min }}:{{ clock_sec }}</ion-item>
+      <ion-item class="item-body balanced" ng-show="status.length > 0">{{ status }}</ion-item>
+      <ion-item ng-if="order.deliver != 'delivery'" class="item-body">
+        Restaurant Address: {{ restaurant.address }}
+      </ion-item>
+      <ion-item ng-if="order.deliver == 'delivery'" class="item-body">
+        Your Address: {{ order.address }}
+      </ion-item>
+
+    </div>
+  </ion-content>
+</ion-view>
