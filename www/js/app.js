@@ -8,8 +8,12 @@ angular.module('tromboy', ['ionic', 'tromboy.controllers', 'tromboy.api', 'ion-f
 
       }
       if (window.StatusBar) {
-        // org.apache.cordova.statusbar required
-        StatusBar.styleDefault();
+        if (ionic.Platform.isAndroid()) {
+          StatusBar.backgroundColorByHexString("#e42112");
+        } else {
+          StatusBar.styleLightContent();
+        }
+
       }
       $cordovaPushV5.initialize({
         android: {
@@ -100,7 +104,7 @@ angular.module('tromboy', ['ionic', 'tromboy.controllers', 'tromboy.api', 'ion-f
       })
 
       .state('app_b.tabs.restaurant_index', {
-        url: '/restaurant_index/:city/:area/:type',
+        url: '/restaurant_index/:param1/:param2/:type',
         views: {
           "tab-food": {
             templateUrl: 'templates/restaurant/index.html',

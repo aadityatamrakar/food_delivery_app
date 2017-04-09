@@ -1,0 +1,19 @@
+<ion-modal-view>
+  <div class="bar bar-header item-input-inset">
+    <label class="item-input-wrapper">
+      <i class="icon ion-ios-search placeholder-icon"></i>
+      <input type="search" ng-model="station_query.station_.name" placeholder="Search Station">
+    </label>
+    <button class="button button-clear button-assertive" ng-click="closeStationModal()">
+      Close
+    </button>
+  </div>
+  <ion-content class="has-header">
+    <ion-list>
+      <ion-item ng-repeat="station in stations | filter:station_query" ng-click="selectStation('{{station.city_id}}', '{{station.station_.name}}')">
+        {{ station.station_.name }}
+        <span class="pull-right">Arr: {{ station.actarr }} | Dep: {{ station.actdep }}</span>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-modal-view>

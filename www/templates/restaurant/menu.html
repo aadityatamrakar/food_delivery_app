@@ -4,13 +4,14 @@
       <div class="item item-thumbnail-left">
         <img ng-src="{{ logo_path }}{{ restaurant.logo }}"><br/>
         <h2 class="assertive"><b>{{ restaurant.name }}</b></h2>
+        <p>Popular Dish - <b>{{ restaurant.speciality }}</b></p>
         <p>{{ restaurant.cuisines.join(', ') }}</p>
       </div>
       <label class="item item-input">
         <i class="icon ion-search placeholder-icon"></i>
         <input type="text" placeholder="Search" ng-model="restaurant.search.title">
       </label>
-      <a class="item item-icon-right" ng-repeat="category in restaurant.menu | filter: restaurant.search.title" href="#/app_b/tabs/restaurant/product/{{restaurant.id}}/{{ category.id }}">
+      <a ng-if="category.products.length>0" class="item item-icon-right" ng-repeat="category in restaurant.menu | filter: restaurant.search.title" href="#/app_b/tabs/restaurant/product/{{restaurant.id}}/{{ category.id }}">
         {{ category.title }}
         <i class="icon ion-ios-arrow-right"></i>
       </a>

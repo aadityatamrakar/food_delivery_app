@@ -8128,7 +8128,7 @@ input:checked + .checkbox-icon:after {
   height: 31px;
   border: solid 2px #e6e6e6;
   border-radius: 20px;
-  background-color: #fff;
+  /*background-color: #fff;*/
   content: ' ';
   cursor: pointer;
   pointer-events: none; }

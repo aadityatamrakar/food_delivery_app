@@ -1,40 +1,28 @@
-<ion-view class="loginbg">
+<ion-view class="">
+  <ion-nav-bar class="bar bar-assertive">
+    <ion-nav-title>Login</ion-nav-title>
+  </ion-nav-bar>
   <ion-content class="has-header">
-    <br><br>
-    <div class="row ">
-      <div class="col-10"></div>
-      <div class="col-80 text-center mytitle" ><h1>TromBoy</h1></div>
-      <div class="col-10"></div>
-    </div>
-    <br><br>
 
     <div class="card">
-      <div class="item item-balanced text-center">
-        Already a Member ? Login
-      </div>
       <div class="item-body">
-        <div class="list">
-          <label class="item item-input item-stacked-label">
-            <span class="input-label">Mobile No.</span>
-            <input type="number" id="login_mobile" onkeyup="if(document.getElementById('login_mobile').value.length == 10){ document.getElementById('login_pin').focus(); }" placeholder="Enter your registered mobile no." ng-model="login.mobile">
-          </label>
-          <div class="row">
-            <div class="col-60">
-              <label class="item item-input item-stacked-label">
-                <span class="input-label">PIN</span>
-                <input type="number" style="-webkit-text-security: disc;" ng-model="login.pin" id="login_pin" ng-change="login_submit()" placeholder="4 digit PIN">
-              </label>
-            </div>
-            <div class="col-40">
-              <ion-item class="button button-block button-positive" ng-click="regen_pin()">Regenerate ?</ion-item>
-            </div>
-          </div>
-        </div>
+        <label class="item item-input item-stacked-label">
+          <span class="input-label">Mobile No.</span>
+          <input type="number" id="login_mobile" onkeyup="if(document.getElementById('login_mobile').value.length == 10){ document.getElementById('login_pin').focus(); }" placeholder="Enter your registered mobile no." ng-model="login.mobile">
+        </label>
+        <label class="item item-input item-stacked-label">
+          <span class="input-label">PIN</span>
+          <input type="number" style="-webkit-text-security: disc;" ng-model="login.pin" id="login_pin" placeholder="4 digit PIN">
+        </label>
       </div>
-      <ion-item class="item-dark text-center" href="#/signup_form">
-        Not a member yet ? Register Now
-        <!--<a style="text-decoration: none; color: white;" href="#" ui-sref="register">Not a member yet ? Register Now</a>-->
-      </ion-item >
     </div>
+    <center>
+      <button class="button button-assertive button-outline" style="width: 70%; border-radius: 30px;" ng-click="login_submit()">Login</button>
+      <br/><br/>
+      <p>Don't have an account ?</p>
+      <a style="font-size: 25px; text-decoration: none;" href="#/signup_form">Sign up <i class="fa fa-arrow-right"></i></a>
+      <br/><br/>
+      <a style="font-size: 25px; text-decoration: none;" ng-click="regen_pin()">Forgot PIN <i class="fa fa-arrow-right"></i></a>
+    </center>
   </ion-content>
 </ion-view>

@@ -26,19 +26,23 @@
           <i class="fa fa-user-circle" style="font-size: 22px; margin-right: 15px;"></i>
           My Profile
         </ion-item>
-        <ion-item menu-close href="#">
-          <i class="fa fa-gift" style="font-size: 22px; margin-right: 15px;"></i>
-          Offers
-        </ion-item>
         <ion-item menu-close href="#/app_b/orders">
           <i class="fa fa-list-alt" style="font-size: 22px; margin-right: 15px;"></i>
           Orders
         </ion-item>
-        <!--<ion-item menu-close href="#">-->
-          <!--<i class="fa fa-barcode" style="font-size: 22px; margin-right: 15px;"></i>-->
-          <!--Nearby Coupons-->
-        <!--</ion-item>-->
-        <ion-item menu-close href="#">
+        <ion-item menu-close ng-click="">
+          <i class="fa fa-remove" style="font-size: 22px; margin-right: 15px;"></i>
+          Cancellations and Refunds
+        </ion-item>
+        <ion-item menu-close ng-click="openWeb('https://tromboy.com/privacy_policy');">
+          <i class="fa fa-question-circle-o" style="font-size: 22px; margin-right: 15px;"></i>
+          Privacy Policy
+        </ion-item>
+        <ion-item menu-close ng-click="openWeb('https://tromboy.com/help_and_support');">
+          <i class="fa fa-support" style="font-size: 22px; margin-right: 15px;"></i>
+          Help and Support
+        </ion-item>
+        <ion-item menu-close ng-click="openWeb('https://tromboy.com');">
           <i class="fa fa-info-circle" style="font-size: 22px; margin-right: 15px;"></i>
           About
         </ion-item>

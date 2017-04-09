@@ -1,35 +1,34 @@
-<ion-view title="Register" class="loginbg">
+<ion-view title="Sign Up" class="">
   <ion-nav-bar class="bar bar-header bar-assertive">
     <ion-nav-back-button></ion-nav-back-button>
-    <h1 class="title">Register</h1>
+    <h1 class="title">Sign Up</h1>
   </ion-nav-bar>
   <ion-content class="has-header">
     <div class="card">
-      <div class="item item-balanced text-center">
-        Please fill your details below.
-      </div>
       <div class="item-body">
         <div class="list">
-          <label class="item item-input item-stacked-label">
-            <span class="input-label">Full Name</span>
-            <input type="text" placeholder="Enter your Full Name" ng-model="user.name">
+          <label class="item">
+            <input type="text" placeholder="Full Name" ng-model="user.name">
             <span class="assertive">{{ error.name }}</span>
           </label>
-          <label class="item item-input item-stacked-label">
-            <span class="input-label">Mobile No.</span>
-            <input type="number" id="reg_mobile" onkeyup="if(document.getElementById('reg_mobile').value.length==10){ document.getElementById('reg_pin').focus(); }" placeholder="Enter your  mobile no." ng-model="user.mobile">
+          <label class="item">
+            <input type="number" id="reg_mobile" onkeyup="if(document.getElementById('reg_mobile').value.length==10){ document.getElementById('reg_pin').focus(); }" placeholder="Mobile No." ng-model="user.mobile">
             <span class="assertive">{{ error.mobile}}</span>
           </label>
-          <label class="item item-input item-stacked-label">
-            <span class="input-label">PIN</span>
-            <input type="number" id="reg_pin" style="-webkit-text-security: disc;" placeholder="Enter your 4 digit " ng-model="user.pin" onkeyup="if(document.getElementById('reg_pin').value.length==4){ document.getElementById('reg_pin_verify').focus(); }">
-            <span class="assertive">{{ error.pin }}</span>
-          </label>
-          <label class="item item-input item-stacked-label">
-            <span class="input-label">Verify PIN</span>
-            <input type="number" id="reg_pin_verify" style="-webkit-text-security: disc;" placeholder="Verify PIN" ng-model="user.pin_verify" onkeyup="if(document.getElementById('reg_pin_verify').value.length==4){ document.getElementById('reg_address').focus(); }">
-            <span class="assertive">{{ error.verify_pin }}</span>
-          </label>
+          <div class="row">
+            <div class="col-50">
+              <label class="item">
+                <input type="number" id="reg_pin" style="-webkit-text-security: disc;" placeholder="PIN" ng-model="user.pin" onkeyup="if(document.getElementById('reg_pin').value.length==4){ document.getElementById('reg_pin_verify').focus(); }">
+                <span class="assertive">{{ error.pin }}</span>
+              </label>
+            </div>
+            <div class="col-50">
+              <label class="item">
+                <input type="number" id="reg_pin_verify" style="-webkit-text-security: disc;" placeholder="Re-enter PIN" ng-model="user.pin_verify" onkeyup="if(document.getElementById('reg_pin_verify').value.length==4){ document.getElementById('reg_address').focus(); }">
+                <span class="assertive">{{ error.verify_pin }}</span>
+              </label>
+            </div>
+          </div>
           <label class="item item-input item-stacked-label">
             <span class="input-label">Address Line 1</span>
             <input type="text" placeholder="(House No./Building)" ng-model="user.address" id="reg_address">
@@ -40,29 +39,19 @@
             <input type="text" placeholder="(Colony,Locality,Street)" ng-model="user.address2">
             <span class="assertive">{{ error.address2 }}</span>
           </label>
-          <label class="item item-input item-stacked-label">
-            <span class="input-label">Email</span>
-            <input type="text" placeholder="Enter your email" ng-model="user.email">
+          <label class="item">
+            <input type="text" placeholder="Email Address" ng-model="user.email">
             <span class="assertive">{{ error.email}}</span>
-          </label>
-          <label class="item item-input item-select">
-            <div class="input-label">
-              City
-            </div>
-            <select ng-model="user.city">
-              <option value="3">Indore</option>
-              <option value="2">Satna</option>
-            </select>
           </label>
         </div>
       </div>
-      <div class="item">
-        Your phone number will be verified using an OTP
-      </div>
       <ion-checkbox ng-model="tc_check" class="checkbox-balanced">Accept T&C</ion-checkbox>
-      <div class="item item-dark text-center" ng-show="tc_check" ng-click="btn_verify()">
-        Register Now
-      </div>
     </div>
+    <center>
+      <button ng-show="tc_check" ng-click="btn_verify()" class="button button-assertive button-outline" style="width: 70%; border-radius: 30px;">Sign Up</button>
+      <br/><br/>
+      <p>Already have an account ?</p>
+      <a style="font-size: 25px; text-decoration: none;" href="#/login">Login <i class="fa fa-arrow-right"></i></a>
+    </center>
   </ion-content>
 </ion-view>

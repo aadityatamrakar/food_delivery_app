@@ -6,35 +6,54 @@
   </ion-nav-buttons>
   <ion-content>
     <ion-slide-box auto-play="true" slide-interval="1500" show-pager="true" does-continue="true">
-      <ion-slide>
+      <ion-slide ng-if="banners.length == 0">
         <img ng-src="img/main320x.jpg" width="100%" />
       </ion-slide>
-      <ion-slide>
-        <img ng-src="img/main320x.jpg" width="100%" />
-      </ion-slide>
-      <ion-slide>
-        <img ng-src="img/main320x.jpg" width="100%" />
+      <ion-slide ng-repeat="banner in banners" ng-if="banners.length > 0">
+        <img ng-src="{{ banner }}" width="100%" height="320px" />
       </ion-slide>
     </ion-slide-box>
-    <div class="card">
+
+    <!--<div class="card" style="margin: 5px 10px;">-->
+      <!--<div class="item text-center">-->
+        <!--<span class="pull-left" style="font-weight: bold; font-size: 20px; margin-top: 5px;" ng-click="switch=false">Local</span>-->
+        <!--<label class="toggle toggle-dark">-->
+          <!--<input type="checkbox" ng-model="switch">-->
+          <!--<div class="positive-bg track">-->
+            <!--<div class="handle"></div>-->
+          <!--</div>-->
+        <!--</label>-->
+        <!--<span class="pull-right" style="font-weight: bold; font-size: 20px; margin-top: 5px;" ng-click="switch=true">Train</span>-->
+      <!--</div>-->
+    <!--</div>-->
+
+    <div class="card" ng-hide="switch" style="margin: 5px 10px;">
       <div class="item text-center"><b>SELECT LOCATION</b></div>
       <div class="item-body">
         <label class="item item-input" ng-click="openCityModal()">
           <span class="input-label"><b>City</b></span>
-          <input type="text" placeholder="Select City" ng-model="selected.city.name">
+          <input type="text" placeholder="Select City" readonly ng-model="selected.city.name" style="background-color: white;">
         </label>
         <label class="item item-input" ng-click="openAreaModal()">
           <span class="input-label"><b>Area</b></span>
-          <input type="text" placeholder="Select Area" ng-model="selected.area.name">
+          <input type="text" placeholder="Select Area" readonly ng-model="selected.area.name" style="background-color: white;">
         </label>
       </div>
-      <div class="item text-center item-balanced" ng-click="selectOrderInfo()"><b>Show Restaurants!</b></div>
+      <div class="item text-center switch_bg" style="color: #fff;" ng-click="selectOrderInfo('local')"><b>Show Restaurants!</b></div>
     </div>
-    <!--<ion-tabs class="tabs-icon-top tabs-assertive tabs-color-white">-->
-      <!--<ion-tab title="Food" icon-off="fa fa-mobile-phone" icon-on="fa fa-mobile-phone" href="#/app/tabs/main"></ion-tab>-->
-      <!--<ion-tab title="Recharge" icon-off="fa fa-mobile-phone" icon-on="fa fa-mobile-phone" href="#/app/tabs/earn"></ion-tab>-->
-      <!--<ion-tab title="Earn" icon-off="fa fa-inr " icon-on="fa fa-inr " href="#/app/tabs/account"></ion-tab>-->
-      <!--<ion-tab title="Nearby Coupons" icon-off="fa fa-barcode" icon-on="fa fa-barcode" href="#/app/tabs/account"></ion-tab>-->
-    <!--</ion-tabs>-->
+    <div class="card" ng-show="switch" style="margin: 5px 10px;">
+      <div class="item text-center"><b>TRAIN DETAILS</b></div>
+      <div class="item-body">
+        <label class="item item-input" ng-click="openTrainModal()">
+          <span class="input-label"><b>Train</b></span>
+          <input type="text" readonly style="background-color: white;" placeholder="Select Train" ng-model="selected.train.name">
+        </label>
+        <label class="item item-input" ng-click="openStationModal()">
+          <span class="input-label"><b>Station</b></span>
+          <input type="text" readonly style="background-color: white;" placeholder="Select Station" ng-model="selected.station.name">
+        </label>
+      </div>
+      <div class="item text-center switch_bg" style="color: #fff;" ng-click="selectOrderInfo('train')"><b>Order Food in Train!</b></div>
+    </div>
   </ion-content>
 </ion-view>

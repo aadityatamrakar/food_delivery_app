@@ -10,23 +10,30 @@ angular.module('tromboy.api', ['underscore'])
     // var logo_path = 'http://foodadmin.local/images/restaurant/logo/';
     var api_url = 'https://tromboy.com/api';
     var logo_path = 'https://admin.tromboy.com/images/restaurant/logo/';
-    var cities = [];
-    var restaurants = [];
-    var restaurant = [];
-    var cart = [];
-    var order = [];
-    var type;
+    var cities = restaurants = restaurant = [];
+    var trains = cart = order = train = [];
+    var banner_folder = 'https://admin.tromboy.com/images/banner/mobile/';
+    var type, train_no, station;
     var wallet = {bal: 0, transactions: []};
+
     return {
       logo_path: function (){
         return logo_path;
+      },
+      train_no: function (t){
+        if(t != null) train_no = t;
+        return train_no;
+      },
+      station: function (t){
+        if(t != null) station = t;
+        return station;
       },
       login: function (mobile, pin){
         var login_data = {mobile: mobile, pin: pin};
         return $http.post(api_url+'/login', login_data);
       },
       request_otp: function (user){
-        var register_data = {name:user.name, email:user.email, mobile:user.mobile, pin:user.pin, address:user.address+', '+user.address2, city:user.city};
+        var register_data = {name:user.name, email:user.email, mobile:user.mobile, pin:user.pin, address:user.address+', '+user.address2, city: user.city};
         return $http.post(api_url+'/otp/request', register_data);
       },
       register: function (user){
@@ -93,14 +100,23 @@ angular.module('tromboy.api', ['underscore'])
       fetch_restaurant: function (area_id, type){
         return $http.get(api_url+'/restaurant/'+area_id+'/'+type, {cache: true});
       },
+      fetch_restaurant_train: function (city){
+        return $http.get(api_url+'/railway/restaurant/'+city, {cache: true});
+      },
       clear_restaurants: function (){
         restaurants = [];
+      },
+      set_restaurant: function (res){
+        restaurant = res;
       },
       store_restaurant: function (rs){
         // angular.forEach(rs, function (v, i){
         //   restaurants.push(v);
         // });
         restaurants = rs;
+      },
+      get_restaurants: function (){
+        return restaurants;
       },
       get_restaurant: function (id){
         var deferred = $q.defer();
@@ -154,6 +170,9 @@ angular.module('tromboy.api', ['underscore'])
       get_cart: function (){
         return cart;
       },
+      set_cart: function (c){
+        cart = c;
+      },
       remove_from_cart: function (p){
         angular.forEach(cart, function (v, i){
           if(v.id == p.id) {
@@ -190,8 +209,8 @@ angular.module('tromboy.api', ['underscore'])
       check_coupon: function (t, gtotal, uid){
         return $http.post(api_url+'/check_coupon', {code: t, gtotal: gtotal, m: $rootScope.user.mobile});
       },
-      place_order: function (cart, coupon, restaurant, type, address, payment_id, payment_amount, wallet_amount){
-        var data = {cart: cart, coupon: null, restaurant_id: restaurant.id, mobile: $rootScope.user.mobile, type: type, address: address, payment_id: payment_id, payment_amount: payment_amount, wallet_amount: wallet_amount};
+      place_order: function (cart, coupon, restaurant, type, address, payment_id, payment_amount, wallet_amount, mobile2, remarks){
+        var data = {cart: cart, coupon: null, restaurant_id: restaurant.id, mobile: $rootScope.user.mobile, type: type, address: address, payment_id: payment_id, payment_amount: payment_amount, wallet_amount: wallet_amount, mobile2: mobile2, remarks: remarks};
         if(coupon.applied == true) data.coupon = coupon.code;
         return $http.post(api_url+'/place_order', data);
       },
@@ -235,6 +254,40 @@ angular.module('tromboy.api', ['underscore'])
         var data = {'mobile': mobile};
         return $http.post(api_url+'/regen/pin', data);
       },
-
+      get_banner: function (){
+        var deferred = $q.defer();
+        $http.get(api_url+'/banner/get', {cache: true})
+          .then(function (res){
+            deferred.resolve(_.map(res.data, function(banner){ return banner_folder+banner.url; }));
+          });
+        return deferred.promise;
+      },
+      get_pnr: function (pnr){
+        return $http.get(api_url+'/railway/pnr/'+pnr);
+      },
+      get_trains: function(query){
+        var deferred = $q.defer();
+        $http.get(api_url+'/railway/trains/'+query, {cache: true})
+          .then(function (res){
+            deferred.resolve(res.data);
+          });
+        return deferred.promise;
+      },
+      get_stations: function(query){
+        var deferred = $q.defer();
+        $http.get(api_url+'/railway/stations/'+query, {cache: true})
+          .then(function (res){
+            deferred.resolve(res.data);
+          });
+        return deferred.promise;
+      },
+      get_live_stations: function(query, date){
+        var deferred = $q.defer();
+        $http.get(api_url+'/railway/live/'+query+'/'+date, {cache: true})
+          .then(function (res){
+            deferred.resolve(res.data);
+          });
+        return deferred.promise;
+      },
     }
   });

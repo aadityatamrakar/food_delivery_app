@@ -1,0 +1,21 @@
+<ion-modal-view>
+  <div class="bar bar-header item-input-inset">
+    <label class="item-input-wrapper">
+      <i class="icon ion-ios-search placeholder-icon"></i>
+      <input type="search" ng-model-options="{debounce:500}" ng-change="search_trains(train_query)" ng-model="train_query" placeholder="Train Number / Name">
+    </label>
+    <button class="button button-clear button-assertive" ng-click="closeTrainModal()">
+      Close
+    </button>
+  </div>
+  <ion-content class="has-header">
+    <ion-list>
+      <ion-item ng-repeat="train in trains" ng-click="selectTrain('{{train.train_no}}', '{{train.train_name}}')">{{ train.train_name }}</ion-item>
+    </ion-list>
+
+    <ion-card ng-show="trains.length==0">
+      <ion-item class="item-body">Enter to Trains number or Train Name to Search.</ion-item>
+    </ion-card>
+
+  </ion-content>
+</ion-modal-view>

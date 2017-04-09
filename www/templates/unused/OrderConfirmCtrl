@@ -1,0 +1,104 @@
+// .controller('ConfirmOrderCtrl', function ($scope, WebApi, $timeout, $rootScope, $ionicLoading, $ionicHistory){
+  //   $scope.user = $rootScope.user;
+  //   $scope.order = WebApi.order();
+  //   $scope.check = true; $scope.time = 0;
+  //   $scope.interval = 1000;
+  //   $scope.status = '';
+  //   $scope.time = 0;
+  //   $scope.clock = '00:00';
+  //   $scope.order_s = '';
+  //   $scope.clock_min = 00;
+  //   $scope.clock_sec = 00;
+  //   $scope.run_time = true;
+  //   WebApi.get_restaurant()
+  //     .then(function (res){
+  //       $scope.restaurant = res;
+  //       if($scope.order.deliver == 'delivery')
+  //         $scope.clock_min = $scope.restaurant.delivery_time;
+  //       else if($scope.order.deliver == 'pickup')
+  //         $scope.clock_min = $scope.restaurant.pickup_time;
+  //       else if($scope.order.deliver == 'dinein')
+  //         $scope.clock_min = $scope.restaurant.dinein_time;
+  //
+  //     });
+  //   // $scope.order = {id: 13};
+  //   var min_elapsed;
+  //
+  //   console.log($scope.order, $scope.restaurant, $scope.clock_min);
+  //   $scope.clock_run = function()
+  //   {
+  //     if($scope.run_time)
+  //     {
+  //       if($scope.clock_sec > 1) $scope.clock_sec -= 1;
+  //       else{
+  //         console.log('sec else');
+  //         if($scope.clock_min > 1) {
+  //           $scope.clock_min -= 1;
+  //           $scope.clock_sec = 60;
+  //         }else{
+  //           console.log('min else');
+  //           $scope.clock_min = '00';
+  //           $scope.clock_sec = '00';
+  //           $scope.run_time = false;
+  //         }
+  //       }
+  //     }
+  //     $timeout( function (){ $scope.clock_run(); }, 1000);
+  //   }
+  //
+  //   $scope.check_status = function (){
+  //     console.log('checking');
+  //     if($scope.check){
+  //       $ionicLoading.show();
+  //       WebApi.order_status($scope.order)
+  //         .then(function (res){
+  //           $ionicLoading.hide();
+  //           if($scope.order_s != res)
+  //           {
+  //             $scope.order_s = res;
+  //             if(res  == 'WFRA') {$scope.status = 'Awaiting for confirmation from Restaurant.';}
+  //             else if(res == 'PROC') {
+  //               $scope.status = 'Order is accepted by vendor and is being Processed.';
+  //               var order_time = moment($scope.order.created_time);
+  //               var min_elapsed = moment.utc(moment().diff(order_time)).format("m");
+  //               var sec_elapsed = moment.utc(moment().diff(order_time)).format("s");
+  //               $scope.clock_min -= min_elapsed;
+  //               $scope.clock_sec -= sec_elapsed;
+  //               $scope.clock_run();
+  //             }
+  //             else if(res == 'CMPT') {
+  //               $scope.run_time = false;
+  //               $scope.check = false;
+  //               $scope.status = 'Order is Completed.';
+  //             }
+  //             else if(res == 'DECL') {
+  //               $scope.run_time = false;
+  //               $scope.check = false;
+  //               $scope.status = 'Order is Declined.';
+  //             }
+  //             else if(res == 'CNCL') {
+  //               $scope.run_time = false;
+  //               $scope.check = false;
+  //               $scope.status = 'Order is Canceled.';
+  //             }
+  //           }
+  //         });
+  //       $scope.time++;
+  //
+  //       if($scope.time > 30) $scope.check = false;
+  //       else if($scope.time > 20) $timeout(function (){ $scope.check_status() }, 90000);
+  //       else if($scope.time > 10) $timeout(function (){ $scope.check_status() }, 60000);
+  //       else if($scope.time > 4) $timeout(function (){ $scope.check_status() }, 30000);
+  //       else if($scope.check && $scope.time < 5) $timeout(function (){ $scope.check_status() }, 15000);
+  //     }
+  //   };
+  //
+  //   $scope.check_status();
+  //
+  //   for( var viewObj in $ionicHistory.viewHistory().views )
+  //   {
+  //     if( $ionicHistory.viewHistory().views[viewObj].stateName == 'app_b.tabs.main' ){
+  //       $ionicHistory.backView($ionicHistory.viewHistory().views[viewObj]);
+  //     }
+  //   }
+  // })

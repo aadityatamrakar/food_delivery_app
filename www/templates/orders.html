@@ -1,11 +1,22 @@
 <ion-view view-title="Orders">
   <ion-content>
-    <ion-list>
-      <a ng-repeat="order in orders" class="item item-thumbnail-left" href="#">
-        <img src="{{ }}">
-        <h2>Pretty Hate Machine</h2>
-        <p>Nine Inch Nails</p>
-      </a>
+    <center>
+      <div class="card">
+        <div class="item-image">
+          <img ng-src="img/order.png" />
+        </div>
+        <div class="item-body positive-bg" ng-if="orders.length == 0">
+          <h3 style="color: white;">You have no past orders.</h3>
+        </div>
+      </div>
+    </center>
+    <ion-list ng-if="orders.length > 0">
+      <div ng-repeat="order in orders track by $index" class="item item-thumbnail-left" >
+        <img ng-src="https://admin.tromboy.com/images/restaurant/logo/{{ order.restaurant.logo }}">
+        <h2>{{ order.restaurant.name }}</h2>
+        <p>Order ID: {{ order.id }} | Amount: <i class="fa fa-inr"></i> {{ order.gtotal }}</p>
+        <button ng-click="open_order_info($index)" class="button button-balanced button-block button-small"><i class="fa fa-refresh"></i> Re-order</button>
+      </div>
     </ion-list>
   </ion-content>
 </ion-view>

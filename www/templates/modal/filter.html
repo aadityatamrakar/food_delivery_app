@@ -40,6 +40,18 @@
     </div>
 
     <div class="list">
+      <div class="item item-toggle">
+        COD Available
+        <label class="toggle toggle-balanced">
+          <input type="checkbox" ng-model="filter.cod_available">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="list">
       <ion-item class="assertive">Cuisines</ion-item>
       <ion-list>
         <ion-checkbox ng-repeat="cuisine in filter.cuisines" ng-model="cuisine.check">{{ cuisine.title }}</ion-checkbox>

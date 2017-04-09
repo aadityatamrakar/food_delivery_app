@@ -8,21 +8,25 @@ angular.module('tromboy.controllers', ['underscore'])
       pin: window.localStorage.getItem('user_pin'),
       token: window.localStorage.getItem('token'),
       address: window.localStorage.getItem('address'),
-      city: window.localStorage.getItem('city'),
+      // city: window.localStorage.getItem('city'),
       email: window.localStorage.getItem('email')
     };
 
-
+    $scope.openWeb = function (url){
+      window.open(url, '_blank');
+    }
   })
-
-  .controller('MainCtrl',   function($scope, WebApi, $ionicModal, $ionicLoading, $ionicPopup, $state, $ionicHistory) {
+  .controller('MainCtrl',   function($scope, WebApi, $ionicModal, $ionicLoading, $ionicPopup, $state, $ionicHistory, $ionicSlideBoxDelegate) {
     $scope.cities = [];
-    $scope.areas = [];
-    $scope.selected = [];
+    $scope.stations = $scope.areas = $scope.trains =[] ;
+    $scope.switch = false;
+    $scope.selected = {city: {id: 3, name: "INDORE"}};
     $scope.cityModal = null;
-    $scope.area_query = $scope.city_query = {};
+    $scope.train_query = $scope.area_query = $scope.city_query = $scope.station_query = {};
     $scope.template_order_info = '';
     $scope.wallet_balance = 0;
+    $scope.banners = $scope.restaurants = [];
+    $scope.railway = {};
 
     $ionicHistory.clearHistory();
 
@@ -30,7 +34,15 @@ angular.module('tromboy.controllers', ['underscore'])
       $scope.cities = res;
     });
 
+    WebApi.get_banner().then(function (res){
+      console.log(res);
+      $scope.banners = res;
+      $ionicSlideBoxDelegate.update();
+    });
+
     $scope.$on('$ionicView.enter', function(e) {
+      $scope.train_query = $scope.area_query = $scope.city_query = $scope.station_query = '';
+
       WebApi.wallet_balance().then(function (data){
         $scope.wallet_balance = data.data;
       });
@@ -46,18 +58,81 @@ angular.module('tromboy.controllers', ['underscore'])
       }).then(function(modal) {
         $scope.areaModal = modal;
       });
+      $ionicModal.fromTemplateUrl('templates/modal/train.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+      }).then(function(modal) {
+        $scope.trainModal = modal;
+      });
+      $ionicModal.fromTemplateUrl('templates/modal/station.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+      }).then(function(modal) {
+        $scope.stationModal = modal;
+      });
     });
     $scope.closeCityModal = function() {
       $scope.cityModal.hide();
-      $scope.city_query.name = '';
+      $scope.city_query = {};
     };
     $scope.openCityModal = function (){
       $scope.cityModal.show();
     };
+    $scope.closeStationModal = function() {
+      $scope.stationModal.hide();
+      $scope.station_query = {station_:{name:''}};
+    };
+    $scope.openStationModal = function (){
+      var today = moment().format('YMMD');
+      var yesterday = moment().subtract(1, 'days').format('YMMD');
+      var day_before_yesterday = moment().subtract(2, 'days').format('YMMD');
+      console.log('selected');
+      var template = '<div class="list">' +
+        '<ion-radio ng-click="openStationModal_date(\''+today+'\')">Today</ion-radio>' +
+        '<ion-radio ng-click="openStationModal_date(\''+yesterday+'\')">Yesterday</ion-radio>' +
+        '<ion-radio ng-click="openStationModal_date(\''+day_before_yesterday+'\')">Day Before Yesterday</ion-radio>' +
+        '</div>';
+      $scope.liveStationModal = $ionicPopup.show({
+        template: template,
+        title: 'Train Started ?',
+        scope: $scope,
+        buttons: []
+      });
+    };
+
+    $scope.openStationModal_date = function (date){
+      if($scope.liveStationModal) $scope.liveStationModal.close();
+      if($scope.selected.train != null)
+      {
+        $ionicLoading.show();
+        WebApi.get_live_stations($scope.selected.train.id, date).then(function (res){
+          $ionicLoading.hide();
+          if(res.hasOwnProperty('stations') && res.stations.length > 0){
+            $scope.stations = res.stations;
+            $scope.restaurants = res.restaurants;
+            console.log($scope.stations);
+            $scope.stationModal.show();
+          }else{
+            $ionicPopup.alert({
+              title: "Error!",
+              template: "Sorry, No Restaurant are open in the Train Route Cities or Train is not running."
+            });
+          }
+        });
+      }
+    };
+
+    $scope.closeTrainModal = function() {
+      $scope.trainModal.hide();
+      $scope.train_query  = {name: ''};
+    };
+    $scope.openTrainModal = function (){
+      $scope.trainModal.show();
+    };
 
     $scope.closeAreaModal = function() {
       $scope.areaModal.hide();
-      $scope.area_query.name = '';
+      $scope.area_query = {};
     };
     $scope.openAreaModal = function (){
       if($scope.selected.city != null)
@@ -82,19 +157,83 @@ angular.module('tromboy.controllers', ['underscore'])
       $scope.closeAreaModal();
     };
 
-    $scope.selectOrderInfo = function (){
-      $scope.template_order_info = $ionicPopup.show({
-        templateUrl: 'templates/popup/order_info.html',
-        title: 'Order Information',
-        scope: $scope
-      });
+    $scope.selectTrain = function(i,n){
+      $scope.selected.train = {id:i, name: n};
+      $scope.closeTrainModal();
+      $scope.openStationModal();
     };
+    $scope.selectStation = function(i,n){
+      $scope.selected.station = {id:i, name: n};
+      $scope.closeStationModal();
+    };
+
+    $scope.search_trains = function (train_query){
+      WebApi.get_trains(train_query)
+        .then(function (res){
+          $scope.trains = res;
+        });
+    }
+
+    $scope.selectOrderInfo = function (t){
+      if(t == 'local'){
+        if($scope.selected.city.hasOwnProperty('id') && $scope.selected.area.hasOwnProperty('id')){
+          $scope.template_order_info = $ionicPopup.show({
+            templateUrl: 'templates/popup/order_info.html',
+            title: 'Order Information',
+            scope: $scope
+          });
+        }
+      }else{
+        if($scope.selected.train.hasOwnProperty('id') && $scope.selected.station.hasOwnProperty('id')){
+          WebApi.store_restaurant($scope.restaurants[$scope.selected.station.id]);
+          $state.go('app_b.tabs.restaurant_index', {param1: $scope.selected.train.id, param2: $scope.selected.station.name, type: 'train'});
+        }
+      }
+    };
+
+    // $scope.get_pnr_details = function (){
+    //   if($scope.railway.hasOwnProperty('pnr'))
+    //   {
+    //     $ionicLoading.show();
+    //     WebApi.get_pnr($scope.railway.pnr).then(function (res){
+    //       $ionicLoading.hide();
+    //       if(res.data.status == 'ok'){
+    //         if(res.data.passengers[0].status.indexOf('CNF') != -1){
+    //           var confirm = $ionicPopup.confirm({title: 'PNR Details',
+    //             template: "Train No: "+res.data.train_no+', Seat No: '+res.data.passengers[0].seat_no,
+    //             okText: "Proceed ?",
+    //             okType: "button-balanced"
+    //           });
+    //           confirm.then(function (t){
+    //             console.log(t);
+    //           })
+    //         }else{
+    //           var confirm = $ionicPopup.confirm({title: 'PNR Details',
+    //             template: "Train No: "+res.data.train_no+', Your ticket is not confirm, you are not eligible for COD option.',
+    //             okText: "Proceed ?",
+    //             okType: "button-balanced"
+    //           });
+    //           confirm.then(function (t){
+    //             console.log(t);
+    //           })
+    //         }
+    //       }else{
+    //         var confirm = $ionicPopup.confirm({title: 'Error',
+    //           template: "Connection Error, Please Retry."
+    //         });
+    //         confirm.then(function (t){
+    //           console.log(t);
+    //         })
+    //       }
+    //     });
+    //   }
+    // };
+
     $scope.deliveryChoose = function (type){
       $scope.template_order_info.close();
-      $state.go('app_b.tabs.restaurant_index', {city: $scope.selected.city.id, area: $scope.selected.area.id, type: type});
+      $state.go('app_b.tabs.restaurant_index', {param1: $scope.selected.city.id, param2: $scope.selected.area.id, type: type});
     };
   })
-
   .controller('LoginCtrl',  function($scope, $ionicLoading, WebApi, $ionicPopup, $state) {
     $scope.openRegister = function (){ $state.go('register') };
     $scope.login = [];
@@ -112,7 +251,7 @@ angular.module('tromboy.controllers', ['underscore'])
       var myPopup = $ionicPopup.show({
         template: '<label class="item item-input"><span class="input-label">Mobile</span><input type="number" ng-model="data.mobile"></label>',
         title: 'Enter Mobile No.',
-        subTitle: 'You will receive the OTP',
+        subTitle: 'You will receive the PIN',
         scope: $scope,
         buttons: [
           { text: 'Cancel' },
@@ -137,13 +276,13 @@ angular.module('tromboy.controllers', ['underscore'])
           WebApi.req_regen_pin(res).then(function(response){
             $ionicLoading.hide();
             if(response.status == 200 && response.data.status == 'sent'){
-              alert("You will receive your PIN shortly.");
+              $ionicPopup.alert({title: 'TromBoy', template: 'You will receive your PIN shortly.'});
             }else if(response.data.status == 'error'){
-              alert(response.data.error);
+              $ionicPopup.alert({title: 'Error', template: response.data.error});
             }
           });
         }else{
-          alert("Enter valid mobile no.");
+          $ionicPopup.alert({title: 'TromBoy', template: "Enter valid mobile no."});
         }
       });
     };
@@ -181,10 +320,9 @@ angular.module('tromboy.controllers', ['underscore'])
       }
     }
   })
-
   .controller('SignupCtrl', function($scope, $state, WebApi, $ionicLoading, $ionicPopup) {
-    $scope.user = {name:'', email:'', mobile:'', pin:'', pin_verify:'', address:'', address2:'', city:'', otp: ''};
-    $scope.error = {name:'', email:'', mobile:'', pin:'', pin_verify:'', address:'', address2:'', city:''};
+    $scope.user = {name:'', email:'', mobile:'', pin:'', pin_verify:'', address:'', address2:'', otp: '', city: 3};
+    $scope.error = {name:'', email:'', mobile:'', pin:'', pin_verify:'', address:'', address2:'', city: ''};
     $scope.tc_check = true;
     $scope.popup = '';
 
@@ -211,7 +349,7 @@ angular.module('tromboy.controllers', ['underscore'])
 
     $scope.verify = function (){
       $scope.popup = $ionicPopup.show({
-        template: '<input type="number" ng-model="user.otp">',
+        template: '<input type="number" ng-model="user.otp" placeholder="Enter OTP Here.">',
         title: 'Enter OTP',
         subTitle: 'Enter the 6 digit code received in '+$scope.user.mobile,
         scope: $scope,
@@ -224,7 +362,7 @@ angular.module('tromboy.controllers', ['underscore'])
                 e.preventDefault();
               } else {
                 e.preventDefault();
-                $scope.error = {name:'', email:'', mobile:'', pin:'', pin_verify:'', address:'', address2:'', city:''};
+                $scope.error = {name:'', email:'', mobile:'', pin:'', pin_verify:'', address:'', address2:''};
                 $ionicLoading.show();
                 WebApi.register($scope.user)
                   .then(function (res){
@@ -232,7 +370,7 @@ angular.module('tromboy.controllers', ['underscore'])
                     if(res.status == 200)
                     {
                       if(res.data.status == 'ok'){
-                        $scope.user = {name:'', email:'', mobile:'', pin:'', pin_verify:'', address:'', address2:'', city:'', otp:''};
+                        $scope.user = {name:'', email:'', mobile:'', pin:'', pin_verify:'', address:'', address2:'', otp:''};
                         $ionicPopup.alert({
                           title: 'Registration Successful', template: 'You can now login using mobile no and pin.'
                         }).then(function() {
@@ -246,7 +384,7 @@ angular.module('tromboy.controllers', ['underscore'])
                         $ionicPopup.alert({title: 'Error', template: 'Please check entered details.'});
                         $scope.popup.close();
                       }else if(res.data.status == 'invalid_otp'){
-                        alert("Invalid OTP, Try again.");
+                        $ionicPopup.alert({title: 'Error', template: "Invalid OTP, Try again."});
                       }
                     }
                   });
@@ -258,15 +396,20 @@ angular.module('tromboy.controllers', ['underscore'])
     };
 
   })
-
   .controller('FoodCtrl',   function($scope) {})
-
   .controller('RestaurantCtrl',   function($scope, $stateParams, WebApi, $ionicLoading, $ionicModal, $state, $ionicPopup) {
     $scope.type = $stateParams['type'];
-    $scope.city = $stateParams['city'];
-    $scope.area = $stateParams['area'];
+    if($scope.type == 'train'){
+      $scope.train = $stateParams['param1'];
+      $scope.station = $stateParams['param2'];
+      WebApi.station($scope.station);
+      WebApi.train_no($scope.train);
+    }else{
+      $scope.city = $stateParams['param1'];
+      $scope.area = $stateParams['param2'];
+    }
     $scope.search_form = false;
-    $scope.filter = {choice: null, veg_only: false, status: false, pickup: null, dinein:null};
+    $scope.filter = {choice: null, veg_only: false, cod_available: false, status: false, pickup: null, dinein:null};
     $scope.restaurants = [];
     $scope.filtered = [];
     $scope.closed = [];
@@ -274,17 +417,24 @@ angular.module('tromboy.controllers', ['underscore'])
     $scope.logo_path = WebApi.logo_path();
     WebApi.order_type($stateParams['type']);
     $ionicLoading.show();
-    WebApi.fetch_restaurant($scope.area, $scope.type)
-      .then(function (res){
-        $ionicLoading.hide();
-        if(res.status == 200)
-        {
-          WebApi.store_restaurant(res.data.restaurants);
-          $scope.restaurants = res.data.restaurants;
-          $scope.closed = res.data.closed;
-          $scope.filter.cuisines = WebApi.get_cuisines();
-        }
-      });
+    if($scope.type == 'train'){
+      $ionicLoading.hide();
+      $scope.restaurants = WebApi.get_restaurants();
+      $scope.filter.cuisines = WebApi.get_cuisines();
+    }else{
+      WebApi.fetch_restaurant($scope.area, $scope.type)
+        .then(function (res){
+          $ionicLoading.hide();
+          if(res.status == 200)
+          {
+            WebApi.store_restaurant(res.data.restaurants);
+            $scope.restaurants = res.data.restaurants;
+            $scope.closed = res.data.closed;
+            $scope.filter.cuisines = WebApi.get_cuisines();
+          }
+        });
+    }
+
     $scope.openRestaurant = function (id, name){
       if($scope.cart.length==0)
         $state.go('app_b.tabs.restaurant.menu', {restaurant: id});
@@ -325,6 +475,12 @@ angular.module('tromboy.controllers', ['underscore'])
         $scope.filtered = _.where($scope.filtered, {type: "Pure Veg"});
         $scope.filter.status = true;
       }
+
+      if($scope.filter.cod_available == true){
+        $scope.filtered = _.where($scope.filtered, {payment_modes: "Yes"});
+        $scope.filter.status = true;
+      }
+
       $scope.selected_cuisines = _.where($scope.filter.cuisines, {check:true});
       if($scope.selected_cuisines.length>0){
         $scope.filtered = _.filter($scope.filtered, function (res){
@@ -373,7 +529,6 @@ angular.module('tromboy.controllers', ['underscore'])
       $scope.search_form = !$scope.search_form;
     }
   })
-
   .controller('RestaurantMenuCtrl',   function($scope, $stateParams, WebApi, $ionicLoading, $rootScope) {
     $scope.id = $stateParams['restaurant'];
     $scope.logo_path = WebApi.logo_path();
@@ -386,7 +541,6 @@ angular.module('tromboy.controllers', ['underscore'])
       });
     //$scope.restaurant = {"id":1,"logo":"1483355224.jpeg","name":"Maheshwari","address":"rewa road","speciality":"samosa","cuisines":["Cafe","North Indian"],"type":"Pure Veg","delivery_time":"45","pickup_time":"30","dinein_time":"10","delivery_fee":"20","min_delivery_amt":"200","packing_fee":null,"payment_modes":"Yes","$$hashKey":"object:75","menu":[{"id":1,"title":"Snacks","products":[{"id":1,"title":"Samosa","mrp":"10","price":"7"},{"id":2,"title":"Chaat","mrp":"20","price":"15"},{"id":3,"title":"Kachori","mrp":"15","price":"15"},{"id":4,"title":"Pani Puri","mrp":"30","price":"30"}]},{"id":2,"title":"Beverages","products":[{"id":5,"title":"Coke Pepsi","mrp":"60","price":"55"},{"id":6,"title":"Pepsi Thumbs Up","mrp":"60","price":"50"},{"id":8,"title":"Mirinda","mrp":"60","price":"60"}]},{"id":3,"title":"Main Course","products":[{"id":10,"title":"Thali","mrp":"180","price":"180"},{"id":11,"title":"Deluxe Thali","mrp":"200","price":"180"}]},{"id":4,"title":"Dessert","products":[{"id":9,"title":"Ice Cream","mrp":"100","price":"70"}]}]};
   })
-
   .controller('RestaurantProductCtrl',   function($scope, $stateParams, WebApi, $ionicPopup, $state) {
     $scope.id = $stateParams['restaurant'];
     $scope.cat_id = $stateParams['category'];
@@ -482,18 +636,19 @@ angular.module('tromboy.controllers', ['underscore'])
       });
     };
   })
-
   .controller('CartCtrl',   function ($rootScope, $scope, WebApi, $ionicPopup, $ionicLoading, $timeout, $state, $ionicHistory){
     $scope.cart = [];
-    $scope.restaurant = [];
+    $scope.order_details = $scope.train = $scope.restaurant = [];
     $scope.cart_value = $scope.other_charges = $scope.gtotal = 0;
-    $scope.editable = false;
-    $scope.checkout_btn = false;
-    $scope.coupon_t = false;
+    $scope.editable = $scope.checkout_btn = $scope.coupon_t = false;
     $scope.coupon = {code: null, applied: false};
-    $scope.away_amt = 0;
-    $scope.wallet = 0;
+    $scope.away_amt = $scope.wallet = 0;
+    $scope.payment_mode_popup = null;
+    $scope.train_no = $scope.station = '';
     $scope.$on('$ionicView.enter', function(e) {
+      $scope.train_no = WebApi.train_no();
+      $scope.station = WebApi.station();
+
       WebApi.get_restaurant()
         .then(function (res){
           $scope.restaurant = res;
@@ -508,16 +663,35 @@ angular.module('tromboy.controllers', ['underscore'])
 
       // $scope.cart = JSON.parse('[{"id":1,"title":"Samosa","mrp":"10","price":"7","quantity":1}, {"id":2,"title":"Chaat","mrp":"20","price":"15","quantity":20}]');
       // $scope.restaurant = JSON.parse('{"id":1,"logo":"1482313769.jpeg","name":"Maheshwari","address":"rewa road","speciality":"samosa","cuisines":["Cafe","North Indian"],"type":"Pure Veg","delivery_time":"45","pickup_time":"30","dinein_time":"10","delivery_fee":"20","min_delivery_amt":"200","packing_fee":null,"payment_modes":"Yes","menu":[{"id":1,"title":"Snacks","products":[{"id":1,"title":"Samosa","mrp":"10","price":"7","quantity":0},{"id":2,"title":"Chaat","mrp":"20","price":"15","quantity":0},{"id":3,"title":"Kachori","mrp":"15","price":"15","quantity":0},{"id":4,"title":"Pani Puri","mrp":"30","price":"30","quantity":0}]},{"id":2,"title":"Beverages","products":[{"id":5,"title":"Coke Pepsi","mrp":"60","price":"55","quantity":0},{"id":6,"title":"Pepsi Thumbs Up","mrp":"60","price":"50","quantity":0},{"id":8,"title":"Mirinda","mrp":"60","price":"60","quantity":0}]},{"id":3,"title":"Main Course","products":[{"id":10,"title":"Thali","mrp":"180","price":"180","quantity":0},{"id":11,"title":"Deluxe Thali","mrp":"200","price":"180","quantity":0}]},{"id":4,"title":"Dessert","products":[{"id":9,"title":"Ice Cream","mrp":"100","price":"70","quantity":0}]}]}');
-      // $scope.type = WebApi.order_type() || 'delivery';
+      // $scope.type = WebApi.order_type() || 'train';
 
       $scope.editable = false;
       $scope.update();
     });
 
     $scope.take_address = function (){
-      if($scope.type == 'delivery'){
+      if($scope.type != 'train'){
+        var template = '<div class="list">' +
+          '<label class="item item-input" ng-if="type == \'delivery\'">' +
+          '<span class="input-label"><b>Address : </b></span>' +
+          '<input type="text" ng-model="user.address" placeholder="">' +
+          '</label>' +
+          '<label class="item item-input">' +
+          '<span class="input-label"><b>Mobile No. : </b></span>' +
+          '<input type="text" ng-model="user.mobile" readonly>' +
+          '</label>' +
+          '<label class="item item-input">' +
+          '<span class="input-label"><b>Alternate No. : </b></span>' +
+          '<input type="text" ng-model="user.mobile2" value="">' +
+          '</label>' +
+          '<label class="item item-input">' +
+          '<span class="input-label"><b>Remarks : </b></span>' +
+          '<input type="text" ng-model="user.remarks" value="">' +
+          '</label>' +
+          '</div>';
+
         $ionicPopup.show({
-          template: '<input type="text" ng-model="user.address">',
+          template: template,
           title: 'Please confirm your delivery address.',
           scope: $scope,
           buttons: [
@@ -529,18 +703,144 @@ angular.module('tromboy.controllers', ['underscore'])
                 if (!$scope.user.address) {
                   e.preventDefault();
                 } else {
-                  $scope.take_payment($scope.user.address);
+                  if($scope.type == 'delivery')
+                    $scope.take_payment($scope.user.address, $scope.user.mobile, $scope.user.mobile2, $scope.user.remarks);
+                  else
+                    $scope.take_payment(null, $scope.user.mobile, $scope.user.mobile2, $scope.user.remarks);
                 }
               }
             }
           ]
         }).then(function() {});
-      }else {
-        $scope.take_payment(null);
+      } else if($scope.type == 'train'){
+        $scope.train = {pnr: 8257275698};
+        $ionicPopup.show({
+          template: '<input type="number" ng-model="train.pnr"  placeholder="Enter PNR Here.">',
+          title: 'Please Enter your 10 Digit PNR',
+          scope: $scope,
+          buttons: [
+            { text: 'Cancel' },
+            {
+              text: '<b>Validate</b>',
+              type: 'button-positive',
+              onTap: function(e) {
+                if (!$scope.train.pnr) {
+                  e.preventDefault();
+                } else {
+                  if($scope.train.pnr.toString().length == 10){
+                    return $scope.train.pnr;
+                  }else{
+                    e.preventDefault();
+
+                  }
+                }
+              }
+            }
+          ]
+        }).then(function(pnr) {
+          if(pnr && pnr.toString().length == 10)
+          {
+            $ionicLoading.show();
+            WebApi.get_pnr(pnr)
+              .then(function (res)
+              {
+                $ionicLoading.hide();
+                if(res.data.status == 'ok')
+                {
+                  var seat = res.data.passengers[0].seat_no.replace(' ', '').replace(' ', '').split(',');
+                  console.log(seat);
+                  $scope.train['coach'] = seat[0];
+                  $scope.train['seat'] = seat[1];
+                }
+
+                var template = '<div class="list">' +
+                  '<label class="item item-input">' +
+                  '<span class="input-label"><b>Train Coach : </b></span>' +
+                  '<input type="text" ng-model="train.coach" placeholder="">' +
+                  '</label>' +
+                  '<label class="item item-input">' +
+                  '<span class="input-label"><b>Seat No. : </b></span>' +
+                  '<input type="text" ng-model="train.seat">' +
+                  '</label>' +
+                  '<label class="item item-input">' +
+                  '<span class="input-label"><b>Mobile No. : </b></span>' +
+                  '<input type="text" ng-model="user.mobile" readonly>' +
+                  '</label>' +
+                  '<label class="item item-input">' +
+                  '<span class="input-label"><b>Alternate No. : </b></span>' +
+                  '<input type="text" ng-model="train.mobile2">' +
+                  '</label>' +
+                  '<label class="item item-input">' +
+                  '<span class="input-label"><b>Remarks : </b></span>' +
+                  '<input type="text" ng-model="train.remarks">' +
+                  '</label>' +
+                  '</div>';
+                $ionicPopup.show({
+                  template: template,
+                  title: 'Seat and Contact Details',
+                  scope: $scope,
+                  buttons: [
+                    { text: 'Cancel' },
+                    {
+                      text: '<b>OK</b>',
+                      type: 'button-positive',
+                      onTap: function(e) {
+                        if (!$scope.train.coach && !$scope.train.seat) {
+                          e.preventDefault();
+                        } else {
+                          return $scope.train;
+                        }
+                      }
+                    }
+                  ]
+                }).then(function(t) {
+                  $scope.take_payment("Train No: "+$scope.train_no+", Coach: "+$scope.train.coach+", Seat No: "+$scope.train.seat, $scope.user.mobile, t.mobile2, t.remarks);
+                });
+              });
+          }
+        });
       }
     }
 
-    $scope.take_payment = function (address){
+    $scope.take_payment = function (address, mobile, mobile2, remarks){
+      $scope.order_details = {address:address, mobile:mobile, mobile2: mobile2, remarks: remarks};
+      console.log($scope.order_details);
+      if($scope.gtotal > 0){
+        if($scope.restaurant.payment_modes == 'Yes'){
+          var template = '<div class="list">' +
+            '<ion-radio ng-click="do_online_payment()">Online Payment</ion-radio>' +
+            '<ion-radio ng-click="do_cod_order()">Cash on Delivery</ion-radio>' +
+            '</div>';
+          $scope.payment_mode_popup = $ionicPopup.show({
+            template: template,
+            title: 'Select Payment Mode',
+            scope: $scope,
+            buttons: []
+          });
+
+          $scope.payment_mode_popup.then(function(t) {
+            // $scope.take_payment($scope.order_details.address, $scope.user.mobile, $scope.user.mobile2, $scope.user.remarks);
+          });
+        }else{
+          $scope.do_online_payment();
+        }
+      }else{
+        $scope.payment_id = 'wallet';
+        $scope.payment_amount = null;
+        $scope.place_order($scope.order_details.address, $scope.order_details.mobile, $scope.order_details.mobile2, $scope.order_details.remarks);
+      }
+    };
+
+    $scope.do_cod_order = function(){
+      if($scope.payment_mode_popup) $scope.payment_mode_popup.close();
+      $scope.payment_id = 'COD';
+      $scope.payment_amount = $scope.gtotal;
+      $scope.place_order($scope.order_details.address, $scope.order_details.mobile, $scope.order_details.mobile2, $scope.order_details.remarks);
+    };
+
+    $scope.do_online_payment = function ()
+    {
+      if($scope.payment_mode_popup) $scope.payment_mode_popup.close();
       var options = {
         "key": "rzp_test_FMKzS7xs08EwP5",
         "amount": $scope.gtotal*100,
@@ -552,7 +852,7 @@ angular.module('tromboy.controllers', ['underscore'])
           "email": $rootScope.user.email
         },
         "notes": {
-          "address": address
+          "address": $scope.order_details.address
         },
         "theme": {
           "color": "#F37254"
@@ -562,30 +862,23 @@ angular.module('tromboy.controllers', ['underscore'])
       var successCallback = function(success) {
         $scope.payment_id = success.razorpay_payment_id;
         $scope.payment_amount = $scope.gtotal;
-        $scope.place_order(address);
+        $scope.place_order($scope.order_details.address, $scope.order_details.mobile, $scope.order_details.mobile2, $scope.order_details.remarks);
       };
 
       var cancelCallback = function(error) {
-        alert(error.description + ' (Error '+error.code+')')
+        $ionicPopup.alert({title: 'Error', template: error.description + ' (Error '+error.code+')'});
       };
 
       RazorpayCheckout.on('payment.success', successCallback);
       RazorpayCheckout.on('payment.cancel', cancelCallback);
-      if($scope.gtotal > 0){
-        RazorpayCheckout.open(options)
-      }else{
-        $scope.payment_id = 'wallet';
-        $scope.payment_amount = null;
-        $scope.place_order(address);
-      }
+      RazorpayCheckout.open(options);
     };
 
-    $scope.place_order = function (address){
+    $scope.place_order = function (address, mobile, mobile2, remarks){
       console.log('place order');
       $ionicLoading.show();
-      WebApi.place_order($scope.cart, $scope.coupon, $scope.restaurant, $scope.type, address, $scope.payment_id, $scope.payment_amount, $scope.wallet)
+      WebApi.place_order($scope.cart, $scope.coupon, $scope.restaurant, $scope.type, address, $scope.payment_id, $scope.payment_amount, $scope.wallet, mobile2, remarks)
         .then(function (res){
-          console.log(res);
           $ionicLoading.hide();
           WebApi.order(res.data);
           WebApi.clear_cart();
@@ -642,9 +935,9 @@ angular.module('tromboy.controllers', ['underscore'])
           $scope.reset_coupon(false);
         }
       }
-      if($scope.type == 'delivery' && $scope.restaurant.delivery_fee!=null) $scope.other_charges += parseInt($scope.restaurant.delivery_fee);
+      if(($scope.type == 'train' || $scope.type == 'delivery') && $scope.restaurant.delivery_fee!=null) $scope.other_charges += parseInt($scope.restaurant.delivery_fee);
       if($scope.type != 'dinein' && $scope.restaurant.packing_fee!=null) $scope.other_charges += parseInt($scope.restaurant.packing_fee);
-      if($scope.type == 'delivery'){
+      if($scope.type == 'delivery' || $scope.type == 'train'){
         if(parseFloat($scope.restaurant.min_delivery_amt) > ($scope.cart_value)){
           $scope.checkout_btn = false;
           $scope.away_amt = parseInt($scope.restaurant.min_delivery_amt) - ($scope.cart_value);
@@ -673,110 +966,26 @@ angular.module('tromboy.controllers', ['underscore'])
       WebApi.remove_from_cart(p)
     }
     $scope.edit = function (){
-      $ionicLoading.show();
       $scope.editable = !$scope.editable;
-      if(! $scope.editable)$scope.update();
-      $timeout(function (){ $ionicLoading.hide() }, 750);
+      if(! $scope.editable) {
+        $ionicLoading.show();
+        WebApi.wallet_balance().then(function (res){
+          $scope.wallet = res.data;
+          $scope.update();
+          $ionicLoading.hide();
+        });
+      }
     }
   })
 
   .controller('ConfirmOrderCtrl', function ($scope, WebApi, $timeout, $rootScope, $ionicLoading, $ionicHistory){
     $scope.user = $rootScope.user;
-    $scope.order = WebApi.order();
-    $scope.check = true; $scope.time = 0;
-    $scope.interval = 1000;
-    $scope.status = '';
-    $scope.time = 0;
-    $scope.clock = '00:00';
-    $scope.order_s = '';
-    $scope.clock_min = 00;
-    $scope.clock_sec = 00;
-    $scope.run_time = true;
-    WebApi.get_restaurant()
-      .then(function (res){
-        $scope.restaurant = res;
-        if($scope.order.deliver == 'delivery')
-          $scope.clock_min = $scope.restaurant.delivery_time;
-        else if($scope.order.deliver == 'pickup')
-          $scope.clock_min = $scope.restaurant.pickup_time;
-        else if($scope.order.deliver == 'dinein')
-          $scope.clock_min = $scope.restaurant.dinein_time;
-
-      });
-    // $scope.order = {id: 13};
-    var min_elapsed;
-
-    console.log($scope.order, $scope.restaurant, $scope.clock_min);
-    $scope.clock_run = function()
-    {
-      if($scope.run_time)
-      {
-        if($scope.clock_sec > 1) $scope.clock_sec -= 1;
-        else{
-          console.log('sec else');
-          if($scope.clock_min > 1) {
-            $scope.clock_min -= 1;
-            $scope.clock_sec = 60;
-          }else{
-            console.log('min else');
-            $scope.clock_min = '00';
-            $scope.clock_sec = '00';
-            $scope.run_time = false;
-          }
-        }
-      }
-      $timeout( function (){ $scope.clock_run(); }, 1000);
-    }
-
-    $scope.check_status = function (){
-      console.log('checking');
-      if($scope.check){
-        $ionicLoading.show();
-        WebApi.order_status($scope.order)
-          .then(function (res){
-            $ionicLoading.hide();
-            if($scope.order_s != res)
-            {
-              $scope.order_s = res;
-              if(res  == 'WFRA') {$scope.status = 'Awaiting for confirmation from Restaurant.';}
-              else if(res == 'PROC') {
-                $scope.status = 'Order is accepted by vendor and is being Processed.';
-                var order_time = moment($scope.order.created_time);
-                var min_elapsed = moment.utc(moment().diff(order_time)).format("m");
-                var sec_elapsed = moment.utc(moment().diff(order_time)).format("s");
-                $scope.clock_min -= min_elapsed;
-                $scope.clock_sec -= sec_elapsed;
-                $scope.clock_run();
-              }
-              else if(res == 'CMPT') {
-                $scope.run_time = false;
-                $scope.check = false;
-                $scope.status = 'Order is Completed.';
-              }
-              else if(res == 'DECL') {
-                $scope.run_time = false;
-                $scope.check = false;
-                $scope.status = 'Order is Declined.';
-              }
-              else if(res == 'CNCL') {
-                $scope.run_time = false;
-                $scope.check = false;
-                $scope.status = 'Order is Canceled.';
-              }
-            }
-          });
-        $scope.time++;
-
-        if($scope.time > 30) $scope.check = false;
-        else if($scope.time > 20) $timeout(function (){ $scope.check_status() }, 90000);
-        else if($scope.time > 10) $timeout(function (){ $scope.check_status() }, 60000);
-        else if($scope.time > 4) $timeout(function (){ $scope.check_status() }, 30000);
-        else if($scope.check && $scope.time < 5) $timeout(function (){ $scope.check_status() }, 15000);
-      }
-    };
-
-    $scope.check_status();
-
+    $scope.$on('$ionicView.enter', function(e) {
+      $ionicLoading.show();
+      $scope.order = WebApi.order();
+      $scope.restaurant = $scope.order.restaurant;
+      $ionicLoading.hide();
+    });
     for( var viewObj in $ionicHistory.viewHistory().views )
     {
       if( $ionicHistory.viewHistory().views[viewObj].stateName == 'app_b.tabs.main' ){
@@ -784,7 +993,6 @@ angular.module('tromboy.controllers', ['underscore'])
       }
     }
   })
-
   .controller('RestaurantMainCtrl',   function ($scope, WebApi){
     $scope.cart_value = $scope.other_charges =0;
     $scope.cart = WebApi.get_cart();
@@ -801,8 +1009,7 @@ angular.module('tromboy.controllers', ['underscore'])
       }
     );
   })
-
-  .controller('ProfileCtrl', function ($scope, $state, WebApi, $rootScope){
+  .controller('ProfileCtrl', function ($scope, $state, WebApi, $rootScope, $ionicPopup){
     $scope.user = $rootScope.user;
     $scope.change_pin = true;
 
@@ -816,7 +1023,7 @@ angular.module('tromboy.controllers', ['underscore'])
             window.localStorage.setItem('email', $scope.user.email);
             $rootScope.user = $scope.user;
           }else if(res.data.status == 'error'){
-            alert("Error: Check entered details.");
+            $ionicPopup.alert({title: 'Error', template: "Check entered details."});
           }
         });
     }
@@ -829,23 +1036,22 @@ angular.module('tromboy.controllers', ['underscore'])
                 .then(function (res) {
                   if (res.data.status == 'ok') {
                     window.localStorage.setItem('user_pin', $scope.user.new_pin);
-                    alert('PIN Changed Successfully.');
+                    $ionicPopup.alert({title: 'TromBoy', template: "PIN Changed Successfully."});
                     $scope.user.old_pin = '';
                     $scope.user.new_pin = '';
                     $scope.user.new_pin_verify = '';
                   }else if(res.data.status == 'error'){
                     if(res.data.error == 'old_pin_invalid'){
-                      alert('Please enter correct old PIN.');
+                      $ionicPopup.alert({title: 'Error', template: "Please enter correct old PIN."});
                     }
                   }
                 })
-            } else alert("PIN does not match.");
-          } else alert('New PIN length should be 4 digit only.');
-        }else alert('Please enter correct old PIN.');
-      }else alert('New PIN length should be 4 digit only.');
+            } else $ionicPopup.alert({title: 'TromBoy', template: "PIN does not match."});
+          } else $ionicPopup.alert({title: 'TromBoy', template: 'New PIN length should be 4 digit only.'});;
+        }else $ionicPopup.alert({title: 'TromBoy', template: 'Please enter correct old PIN.'});
+      }else $ionicPopup.alert({title: 'TromBoy', template: 'New PIN length should be 4 digit only.'});
     }
   })
-
   .controller('WalletCtrl', function ($scope, WebApi, $ionicLoading){
     $scope.wallet = [];
 
@@ -857,18 +1063,41 @@ angular.module('tromboy.controllers', ['underscore'])
       });
     });
   })
-
-  .controller('OrdersCtrl',   function ($scope, WebApi, $ionicLoading){
+  .controller('OrdersCtrl',   function ($scope, WebApi, $ionicLoading, $ionicPopup, $state, $timeout){
     $scope.orders = [];
 
     $scope.$on('$ionicView.enter', function(e) {
       $ionicLoading.show();
       WebApi.all_orders().then(function (res){
         $ionicLoading.hide();
-        console.log(JSON.stringify(res));
-        $scope.orders = res.data;
+        $scope.orders = res.data.reverse();
       });
     });
-  })
 
+    var template = '<ion-card>' +
+      '<ion-item ng-click="reorder(\'delivery\')">Delivery</ion-item>' +
+      '<ion-item ng-click="reorder(\'pickup\')">Pickup</ion-item>' +
+      '<ion-item ng-click="reorder(\'dinein\')">Eat at Restaurant</ion-item>' +
+      '</ion-card>';
+
+    $scope.open_order_info = function(index) {
+      $scope.index = index;
+      $scope.order_popup = $ionicPopup.show({
+        template: template,
+        title: 'Select Order Information',
+        scope: $scope
+      });
+    };
+
+    $scope.reorder = function (type){
+      $scope.order_popup.close();
+      var cart = JSON.parse($scope.orders[$scope.index]['cart']);
+      var restaurant = $scope.orders[$scope.index]['restaurant'];
+      WebApi.set_cart(cart);
+      WebApi.order_type(type);
+      WebApi.set_restaurant(restaurant);
+      $state.go('app_b.tabs.cart');
+    };
+
+  })
   .controller('TabsCtrl',   function (){});

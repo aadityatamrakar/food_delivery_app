@@ -10,7 +10,7 @@
       <div ng-click="quantityPopup(product)" class="item item-icon-right" ng-repeat="product in category.products |filter: category.search.title">
         <div class="row">
           <div class="col-75">
-            <b class="positive">{{ product.title.substr(0, 30) }}</b>
+            <b class="positive item-text-wrap">{{ product.title.substr(0, 30) }}</b>
           </div>
           <div class="col-25">
             <i class="fa fa-inr"></i>
