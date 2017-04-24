@@ -6,9 +6,6 @@
   </ion-nav-buttons>
   <ion-content>
     <ion-slide-box auto-play="true" slide-interval="1500" show-pager="true" does-continue="true">
-      <ion-slide ng-if="banners.length == 0">
-        <img ng-src="img/main320x.jpg" width="100%" />
-      </ion-slide>
       <ion-slide ng-repeat="banner in banners" ng-if="banners.length > 0">
         <img ng-src="{{ banner }}" width="100%" height="320px" />
       </ion-slide>

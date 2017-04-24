@@ -1076,8 +1076,8 @@ angular.module('tromboy.controllers', ['underscore'])
 
     var template = '<ion-card>' +
       '<ion-item ng-click="reorder(\'delivery\')">Delivery</ion-item>' +
-      '<ion-item ng-click="reorder(\'pickup\')">Pickup</ion-item>' +
-      '<ion-item ng-click="reorder(\'dinein\')">Eat at Restaurant</ion-item>' +
+      '<ion-item ng-click="reorder(\'pickup\')">Take Away</ion-item>' +
+      // '<ion-item ng-click="reorder(\'dinein\')">Eat at Restaurant</ion-item>' +
       '</ion-card>';
 
     $scope.open_order_info = function(index) {
