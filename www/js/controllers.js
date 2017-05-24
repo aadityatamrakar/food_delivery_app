@@ -14,7 +14,10 @@ angular.module('tromboy.controllers', ['underscore'])
 
     $scope.openWeb = function (url){
       window.open(url, '_blank');
-    }
+    };
+
+    
+
   })
   .controller('MainCtrl',   function($scope, WebApi, $ionicModal, $ionicLoading, $ionicPopup, $state, $ionicHistory, $ionicSlideBoxDelegate) {
     $scope.cities = [];
@@ -30,16 +33,33 @@ angular.module('tromboy.controllers', ['underscore'])
 
     $ionicHistory.clearHistory();
 
-    WebApi.get_city().then(function (res){
-      $scope.cities = res;
-    });
+    WebApi.check().then(function (s){
+      if( s.status == 200)
+      {
+        if(s.data == 'jai_mata_di')
+        {
+          WebApi.get_city().then(function (res){
+            $scope.cities = res;
+          });
 
-    WebApi.get_banner().then(function (res){
-      console.log(res);
-      $scope.banners = res;
-      $ionicSlideBoxDelegate.update();
+          WebApi.get_banner().then(function (res){
+            $scope.banners = res;
+            $ionicSlideBoxDelegate.update();
+          });
+        }else{
+          $ionicPopup.alert({
+          title: "Error!",
+          template: s.data
+        });
+        }
+      }else{
+        $ionicPopup.alert({
+          title: "Error!",
+          template: "Please check your internet connection."
+        });
+      }
     });
-
+    
     $scope.$on('$ionicView.enter', function(e) {
       $scope.train_query = $scope.area_query = $scope.city_query = $scope.station_query = '';
 
@@ -102,7 +122,7 @@ angular.module('tromboy.controllers', ['underscore'])
 
     $scope.openStationModal_date = function (date){
       if($scope.liveStationModal) $scope.liveStationModal.close();
-      if($scope.selected.train != null)
+      if($scope.selected.train !== null)
       {
         $ionicLoading.show();
         WebApi.get_live_stations($scope.selected.train.id, date).then(function (res){
@@ -135,7 +155,7 @@ angular.module('tromboy.controllers', ['underscore'])
       $scope.area_query = {};
     };
     $scope.openAreaModal = function (){
-      if($scope.selected.city != null)
+      if($scope.selected.city !== null)
       {
         $ionicLoading.show();
         WebApi.get_area($scope.selected.city.id).then(function (res){
@@ -172,7 +192,7 @@ angular.module('tromboy.controllers', ['underscore'])
         .then(function (res){
           $scope.trains = res;
         });
-    }
+    };
 
     $scope.selectOrderInfo = function (t){
       if(t == 'local'){
@@ -239,10 +259,15 @@ angular.module('tromboy.controllers', ['underscore'])
     $scope.login = [];
 
     $scope.$on('$ionicView.enter', function(e) {
-      if(window.localStorage.getItem('user_mobile') != null && window.localStorage.getItem('user_pin') != null)
+      if(window.localStorage.getItem('user_mobile') !== null && window.localStorage.getItem('user_pin') !== null)
       {
         $state.go('app_b.tabs.main');
       }
+    });
+    $scope.$on('$ionicView.afterEnter', function(){
+      setTimeout(function(){
+        document.getElementById("custom-overlay").style.display = "none";
+      }, 3000);
     });
 
     $scope.regen_pin = function (){
@@ -318,7 +343,7 @@ angular.module('tromboy.controllers', ['underscore'])
             }
           });
       }
-    }
+    };
   })
   .controller('SignupCtrl', function($scope, $state, WebApi, $ionicLoading, $ionicPopup) {
     $scope.user = {name:'', email:'', mobile:'', pin:'', pin_verify:'', address:'', address2:'', otp: '', city: 3};
@@ -842,7 +867,7 @@ angular.module('tromboy.controllers', ['underscore'])
     {
       if($scope.payment_mode_popup) $scope.payment_mode_popup.close();
       var options = {
-        "key": "rzp_test_FMKzS7xs08EwP5",
+        "key": "rzp_live_qrPgo4Roezywqb",
         "amount": $scope.gtotal*100,
         "name": "TromBoy",
         "description": "Purchase From "+$scope.restaurant.name,

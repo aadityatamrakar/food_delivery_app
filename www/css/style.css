@@ -67,6 +67,48 @@ div.row{
   display:table;
 }
 
+#custom-overlay {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  background: #ff4b1f;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, #ff9068, #ff4b1f);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, #ff9068, #ff4b1f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+#custom-overlay img {
+  display: block;
+  margin: 0 auto;
+  width: 50%;
+  height: auto;
+  -webkit-animation: rotating-function 5.25s linear infinite;
+  animation: rotating-function 5.25s linear infinite;
+}
+
+@-webkit-keyframes rotating-function {
+  from {
+    -webkit-transform: scale(0.5,0.5);
+  }
+  to {
+    -webkit-transform: scale(1,1);
+  }
+}
+
+@keyframes rotating-function {
+  from {
+    transform: scale(0.5,0.5);
+  }
+  to {
+    transform: scale(1,1);
+  }
+}
+
 .wrapper>.content {
   display:table-cell;
   vertical-align:middle;

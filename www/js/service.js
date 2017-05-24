@@ -8,7 +8,7 @@ angular.module('tromboy.api', ['underscore'])
     var register_data = {name:'', email:'', mobile:'', pin:'', address:'', city:''};
     // var api_url = 'http://tromboy.local/api';
     // var logo_path = 'http://foodadmin.local/images/restaurant/logo/';
-    var api_url = 'https://tromboy.com/api';
+    var api_url = 'https://tromboy.com/api/v2';
     var logo_path = 'https://admin.tromboy.com/images/restaurant/logo/';
     var cities = restaurants = restaurant = [];
     var trains = cart = order = train = [];
@@ -17,6 +17,9 @@ angular.module('tromboy.api', ['underscore'])
     var wallet = {bal: 0, transactions: []};
 
     return {
+      check: function (){
+        return $http.get(api_url+'/check');
+      },
       logo_path: function (){
         return logo_path;
       },

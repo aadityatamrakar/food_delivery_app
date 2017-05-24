@@ -35,7 +35,7 @@ angular.module('tromboy', ['ionic', 'tromboy.controllers', 'tromboy.api', 'ion-f
               console.log('isEnabled');
             }
           });
-        })
+        });
       });
 
       $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
