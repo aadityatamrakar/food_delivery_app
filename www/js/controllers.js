@@ -1,6 +1,6 @@
-angular.module('tromboy.controllers', ['underscore'])
+angular.module('tromboy.controllers', ['underscore', 'ngCordova.plugins.inAppBrowser'])
 
-  .controller('AppCtrl',    function($scope, $ionicModal, $timeout, $rootScope, $cordovaPushV5) {
+  .controller('AppCtrl',    function($scope, $ionicModal, $timeout, $rootScope, $cordovaPushV5, $cordovaInAppBrowser) {
     $rootScope.user = {
       id: window.localStorage.getItem('user_id'),
       name: window.localStorage.getItem('name'),
@@ -13,11 +13,20 @@ angular.module('tromboy.controllers', ['underscore'])
     };
 
     $scope.openWeb = function (url){
-      window.open(url, '_blank');
+      //window.open(url, '_system');
+      var options = {
+        location: 'yes',
+        clearcache: 'yes',
+        toolbar: 'no'
+      };
+      $cordovaInAppBrowser.open(url, '_blank', options)
+        .then(function(event) {
+          // success
+        })
+        .catch(function(event) {
+          // error
+        });
     };
-
-    
-
   })
   .controller('MainCtrl',   function($scope, WebApi, $ionicModal, $ionicLoading, $ionicPopup, $state, $ionicHistory, $ionicSlideBoxDelegate) {
     $scope.cities = [];
@@ -33,33 +42,37 @@ angular.module('tromboy.controllers', ['underscore'])
 
     $ionicHistory.clearHistory();
 
-    WebApi.check().then(function (s){
-      if( s.status == 200)
-      {
-        if(s.data == 'jai_mata_di')
-        {
-          WebApi.get_city().then(function (res){
-            $scope.cities = res;
-          });
-
-          WebApi.get_banner().then(function (res){
-            $scope.banners = res;
-            $ionicSlideBoxDelegate.update();
-          });
-        }else{
-          $ionicPopup.alert({
-          title: "Error!",
-          template: s.data
-        });
-        }
-      }else{
+    if(window.Connection) {
+      if(navigator.connection.type == Connection.NONE) {
         $ionicPopup.alert({
           title: "Error!",
           template: "Please check your internet connection."
         });
+      }else{
+        WebApi.check().then(function (s){
+          if( s.status == 200)
+          {
+            if(s.data == 'jai_mata_di')
+            {
+              WebApi.get_city().then(function (res){
+                $scope.cities = res;
+              });
+
+              WebApi.get_banner().then(function (res){
+                $scope.banners = res;
+                $ionicSlideBoxDelegate.update();
+              });
+            }else{
+              $ionicPopup.alert({
+                title: "Error!",
+                template: s.data
+              });
+            }
+          }
+        });
       }
-    });
-    
+    }
+
     $scope.$on('$ionicView.enter', function(e) {
       $scope.train_query = $scope.area_query = $scope.city_query = $scope.station_query = '';
 
@@ -267,7 +280,7 @@ angular.module('tromboy.controllers', ['underscore'])
     $scope.$on('$ionicView.afterEnter', function(){
       setTimeout(function(){
         document.getElementById("custom-overlay").style.display = "none";
-      }, 3000);
+      }, 3300);
     });
 
     $scope.regen_pin = function (){

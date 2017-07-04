@@ -77,9 +77,11 @@ div.row{
   bottom: 0;
   left: 0;
   z-index: 100;
-  background: #ff4b1f;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to bottom, #ff9068, #ff4b1f);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to bottom, #ff9068, #ff4b1f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  /*background: #ff4b1f;  !* fallback for old browsers *!*/
+  /*background: -webkit-linear-gradient(to bottom, #ff9068, #ff4b1f);  !* Chrome 10-25, Safari 5.1-6 *!*/
+  /*background: linear-gradient(to bottom, #ff9068, #ff4b1f); !* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ *!*/
+  background: url("../img/splash.gif") no-repeat;
+  background-size: cover;
 }
 
 #custom-overlay img {

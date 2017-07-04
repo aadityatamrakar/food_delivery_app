@@ -5,7 +5,7 @@
     <button class="button button-icon button-clear ion-android-person" ui-sref="app_b.profile"></button>
   </ion-nav-buttons>
   <ion-content>
-    <ion-slide-box auto-play="true" slide-interval="1500" show-pager="true" does-continue="true">
+    <ion-slide-box auto-play="true" slide-interval="1500" style="height: 320px;" show-pager="true" does-continue="true">
       <ion-slide ng-repeat="banner in banners" ng-if="banners.length > 0">
         <img ng-src="{{ banner }}" width="100%" height="320px" />
       </ion-slide>
@@ -36,7 +36,7 @@
           <input type="text" placeholder="Select Area" readonly ng-model="selected.area.name" style="background-color: white;">
         </label>
       </div>
-      <div class="item text-center switch_bg" style="color: #fff;" ng-click="selectOrderInfo('local')"><b>Show Restaurants!</b></div>
+      <div class="item text-center switch_bg" style="color: #fff;" ng-click="selectOrderInfo('local')"><b>Show Restaurants</b></div>
     </div>
     <div class="card" ng-show="switch" style="margin: 5px 10px;">
       <div class="item text-center"><b>TRAIN DETAILS</b></div>
