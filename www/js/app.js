@@ -1,6 +1,6 @@
-angular.module('tromboy', ['ionic', 'tromboy.controllers', 'tromboy.api', 'ion-floating-menu', 'ngCordova.plugins.push_v5'])
+angular.module('tromboy', ['ionic', 'tromboy.controllers', 'tromboy.api', 'ion-floating-menu'])
 
-  .run(function($ionicPlatform, $cordovaPushV5, $http, $rootScope) {
+  .run(function($ionicPlatform, $http, $rootScope) {
     $ionicPlatform.ready(function() {
       if (window.cordova && window.cordova.plugins.Keyboard) {
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -15,38 +15,38 @@ angular.module('tromboy', ['ionic', 'tromboy.controllers', 'tromboy.api', 'ion-f
         }
 
       }
-      $cordovaPushV5.initialize({
-        android: {
-          senderID: "858760510176"
-        },
-        ios: {
-          alert: "true",
-          badge: true,
-          sound: 'false'
-        }
-      }).then(function() {
-        console.log("PushReg: ok");
-        $cordovaPushV5.onNotification();
-        $cordovaPushV5.onError();
-        $cordovaPushV5.register().then(function(registrationId) {
-          console.log("RegID: "+registrationId);
-          PushNotification.hasPermission(function(data) {
-            if (data.isEnabled) {
-              console.log('isEnabled');
-            }
-          });
-        });
-      });
+      // $cordovaPushV5.initialize({
+      //   android: {
+      //     senderID: "858760510176"
+      //   },
+      //   ios: {
+      //     alert: "true",
+      //     badge: true,
+      //     sound: 'false'
+      //   }
+      // }).then(function() {
+      //   console.log("PushReg: ok");
+      //   $cordovaPushV5.onNotification();
+      //   $cordovaPushV5.onError();
+      //   $cordovaPushV5.register().then(function(registrationId) {
+      //     console.log("RegID: "+registrationId);
+      //     PushNotification.hasPermission(function(data) {
+      //       if (data.isEnabled) {
+      //         console.log('isEnabled');
+      //       }
+      //     });
+      //   });
+      // });
 
-      $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
-        console.log("Data: "+JSON.stringify(data));
-        // data.message, // data.title, // data.count,
-        // data.sound, // data.image, // data.additionalData
-      });
-
-      $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, e){
-        console.log("Err: "+e.message);
-      });
+      // $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
+      //   console.log("Data: "+JSON.stringify(data));
+      //   // data.message, // data.title, // data.count,
+      //   // data.sound, // data.image, // data.additionalData
+      // });
+      //
+      // $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, e){
+      //   console.log("Err: "+e.message);
+      // });
     });
   })
   .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {

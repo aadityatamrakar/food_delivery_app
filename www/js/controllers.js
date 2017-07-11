@@ -1,6 +1,6 @@
 angular.module('tromboy.controllers', ['underscore', 'ngCordova.plugins.inAppBrowser'])
 
-  .controller('AppCtrl',    function($scope, $ionicModal, $timeout, $rootScope, $cordovaPushV5, $cordovaInAppBrowser) {
+  .controller('AppCtrl',    function($scope, $ionicModal, $timeout, $rootScope, $cordovaInAppBrowser) {
     $rootScope.user = {
       id: window.localStorage.getItem('user_id'),
       name: window.localStorage.getItem('name'),
@@ -47,25 +47,20 @@ angular.module('tromboy.controllers', ['underscore', 'ngCordova.plugins.inAppBro
         $ionicPopup.alert({
           title: "Error!",
           template: "Please check your internet connection."
+        }).then(function (){
+          navigator.app.exitApp();
         });
       }else{
         WebApi.check().then(function (s){
           if( s.status == 200)
           {
-            if(s.data == 'jai_mata_di')
+            if(s.data != 'jai_mata_di')
             {
-              WebApi.get_city().then(function (res){
-                $scope.cities = res;
-              });
-
-              WebApi.get_banner().then(function (res){
-                $scope.banners = res;
-                $ionicSlideBoxDelegate.update();
-              });
-            }else{
               $ionicPopup.alert({
                 title: "Error!",
                 template: s.data
+              }).then(function (){
+                navigator.app.exitApp();
               });
             }
           }
@@ -79,6 +74,14 @@ angular.module('tromboy.controllers', ['underscore', 'ngCordova.plugins.inAppBro
       WebApi.wallet_balance().then(function (data){
         $scope.wallet_balance = data.data;
       });
+      WebApi.get_city().then(function (res){
+        $scope.cities = res;
+      });
+
+      WebApi.get_banner().then(function (res){
+        $scope.banners = res;
+        $ionicSlideBoxDelegate.update();
+      });
       $ionicModal.fromTemplateUrl('templates/modal/city.html', {
         scope: $scope,
         animation: 'slide-in-up'
@@ -91,18 +94,18 @@ angular.module('tromboy.controllers', ['underscore', 'ngCordova.plugins.inAppBro
       }).then(function(modal) {
         $scope.areaModal = modal;
       });
-      $ionicModal.fromTemplateUrl('templates/modal/train.html', {
-        scope: $scope,
-        animation: 'slide-in-up'
-      }).then(function(modal) {
-        $scope.trainModal = modal;
-      });
-      $ionicModal.fromTemplateUrl('templates/modal/station.html', {
-        scope: $scope,
-        animation: 'slide-in-up'
-      }).then(function(modal) {
-        $scope.stationModal = modal;
-      });
+      // $ionicModal.fromTemplateUrl('templates/modal/train.html', {
+      //   scope: $scope,
+      //   animation: 'slide-in-up'
+      // }).then(function(modal) {
+      //   $scope.trainModal = modal;
+      // });
+      // $ionicModal.fromTemplateUrl('templates/modal/station.html', {
+      //   scope: $scope,
+      //   animation: 'slide-in-up'
+      // }).then(function(modal) {
+      //   $scope.stationModal = modal;
+      // });
     });
     $scope.closeCityModal = function() {
       $scope.cityModal.hide();
@@ -111,57 +114,57 @@ angular.module('tromboy.controllers', ['underscore', 'ngCordova.plugins.inAppBro
     $scope.openCityModal = function (){
       $scope.cityModal.show();
     };
-    $scope.closeStationModal = function() {
-      $scope.stationModal.hide();
-      $scope.station_query = {station_:{name:''}};
-    };
-    $scope.openStationModal = function (){
-      var today = moment().format('YMMD');
-      var yesterday = moment().subtract(1, 'days').format('YMMD');
-      var day_before_yesterday = moment().subtract(2, 'days').format('YMMD');
-      console.log('selected');
-      var template = '<div class="list">' +
-        '<ion-radio ng-click="openStationModal_date(\''+today+'\')">Today</ion-radio>' +
-        '<ion-radio ng-click="openStationModal_date(\''+yesterday+'\')">Yesterday</ion-radio>' +
-        '<ion-radio ng-click="openStationModal_date(\''+day_before_yesterday+'\')">Day Before Yesterday</ion-radio>' +
-        '</div>';
-      $scope.liveStationModal = $ionicPopup.show({
-        template: template,
-        title: 'Train Started ?',
-        scope: $scope,
-        buttons: []
-      });
-    };
+    // $scope.closeStationModal = function() {
+    //   $scope.stationModal.hide();
+    //   $scope.station_query = {station_:{name:''}};
+    // };
+    // $scope.openStationModal = function (){
+    //   var today = moment().format('YMMD');
+    //   var yesterday = moment().subtract(1, 'days').format('YMMD');
+    //   var day_before_yesterday = moment().subtract(2, 'days').format('YMMD');
+    //   console.log('selected');
+    //   var template = '<div class="list">' +
+    //     '<ion-radio ng-click="openStationModal_date(\''+today+'\')">Today</ion-radio>' +
+    //     '<ion-radio ng-click="openStationModal_date(\''+yesterday+'\')">Yesterday</ion-radio>' +
+    //     '<ion-radio ng-click="openStationModal_date(\''+day_before_yesterday+'\')">Day Before Yesterday</ion-radio>' +
+    //     '</div>';
+    //   $scope.liveStationModal = $ionicPopup.show({
+    //     template: template,
+    //     title: 'Train Started ?',
+    //     scope: $scope,
+    //     buttons: []
+    //   });
+    // };
 
-    $scope.openStationModal_date = function (date){
-      if($scope.liveStationModal) $scope.liveStationModal.close();
-      if($scope.selected.train !== null)
-      {
-        $ionicLoading.show();
-        WebApi.get_live_stations($scope.selected.train.id, date).then(function (res){
-          $ionicLoading.hide();
-          if(res.hasOwnProperty('stations') && res.stations.length > 0){
-            $scope.stations = res.stations;
-            $scope.restaurants = res.restaurants;
-            console.log($scope.stations);
-            $scope.stationModal.show();
-          }else{
-            $ionicPopup.alert({
-              title: "Error!",
-              template: "Sorry, No Restaurant are open in the Train Route Cities or Train is not running."
-            });
-          }
-        });
-      }
-    };
+    // $scope.openStationModal_date = function (date){
+    //   if($scope.liveStationModal) $scope.liveStationModal.close();
+    //   if($scope.selected.train !== null)
+    //   {
+    //     $ionicLoading.show();
+    //     WebApi.get_live_stations($scope.selected.train.id, date).then(function (res){
+    //       $ionicLoading.hide();
+    //       if(res.hasOwnProperty('stations') && res.stations.length > 0){
+    //         $scope.stations = res.stations;
+    //         $scope.restaurants = res.restaurants;
+    //         console.log($scope.stations);
+    //         $scope.stationModal.show();
+    //       }else{
+    //         $ionicPopup.alert({
+    //           title: "Error!",
+    //           template: "Sorry, No Restaurant are open in the Train Route Cities or Train is not running."
+    //         });
+    //       }
+    //     });
+    //   }
+    // };
 
-    $scope.closeTrainModal = function() {
-      $scope.trainModal.hide();
-      $scope.train_query  = {name: ''};
-    };
-    $scope.openTrainModal = function (){
-      $scope.trainModal.show();
-    };
+    // $scope.closeTrainModal = function() {
+    //   $scope.trainModal.hide();
+    //   $scope.train_query  = {name: ''};
+    // };
+    // $scope.openTrainModal = function (){
+    //   $scope.trainModal.show();
+    // };
 
     $scope.closeAreaModal = function() {
       $scope.areaModal.hide();
@@ -190,22 +193,22 @@ angular.module('tromboy.controllers', ['underscore', 'ngCordova.plugins.inAppBro
       $scope.closeAreaModal();
     };
 
-    $scope.selectTrain = function(i,n){
-      $scope.selected.train = {id:i, name: n};
-      $scope.closeTrainModal();
-      $scope.openStationModal();
-    };
-    $scope.selectStation = function(i,n){
-      $scope.selected.station = {id:i, name: n};
-      $scope.closeStationModal();
-    };
-
-    $scope.search_trains = function (train_query){
-      WebApi.get_trains(train_query)
-        .then(function (res){
-          $scope.trains = res;
-        });
-    };
+    // $scope.selectTrain = function(i,n){
+    //   $scope.selected.train = {id:i, name: n};
+    //   $scope.closeTrainModal();
+    //   $scope.openStationModal();
+    // };
+    // $scope.selectStation = function(i,n){
+    //   $scope.selected.station = {id:i, name: n};
+    //   $scope.closeStationModal();
+    // };
+    //
+    // $scope.search_trains = function (train_query){
+    //   WebApi.get_trains(train_query)
+    //     .then(function (res){
+    //       $scope.trains = res;
+    //     });
+    // };
 
     $scope.selectOrderInfo = function (t){
       if(t == 'local'){
