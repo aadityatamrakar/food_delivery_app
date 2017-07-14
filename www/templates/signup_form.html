@@ -4,26 +4,26 @@
     <h1 class="title">Sign Up</h1>
   </ion-nav-bar>
   <ion-content class="has-header">
-    <div class="card">
+    <div class="card login_card">
       <div class="item-body">
         <div class="list">
-          <label class="item">
+          <label class="item item-input">
             <input type="text" placeholder="Full Name" ng-model="user.name">
             <span class="assertive">{{ error.name }}</span>
           </label>
-          <label class="item">
+          <label class="item item-input">
             <input type="number" id="reg_mobile" onkeyup="if(document.getElementById('reg_mobile').value.length==10){ document.getElementById('reg_pin').focus(); }" placeholder="Mobile No." ng-model="user.mobile">
             <span class="assertive">{{ error.mobile}}</span>
           </label>
           <div class="row">
             <div class="col-50">
-              <label class="item">
+              <label class="item item-input">
                 <input type="number" id="reg_pin" style="-webkit-text-security: disc;" placeholder="PIN" ng-model="user.pin" onkeyup="if(document.getElementById('reg_pin').value.length==4){ document.getElementById('reg_pin_verify').focus(); }">
                 <span class="assertive">{{ error.pin }}</span>
               </label>
             </div>
             <div class="col-50">
-              <label class="item">
+              <label class="item item-input">
                 <input type="number" id="reg_pin_verify" style="-webkit-text-security: disc;" placeholder="Re-enter PIN" ng-model="user.pin_verify" onkeyup="if(document.getElementById('reg_pin_verify').value.length==4){ document.getElementById('reg_address').focus(); }">
                 <span class="assertive">{{ error.verify_pin }}</span>
               </label>

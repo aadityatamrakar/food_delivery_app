@@ -212,8 +212,8 @@ angular.module('tromboy.api', ['underscore'])
       check_coupon: function (t, gtotal, uid){
         return $http.post(api_url+'/check_coupon', {code: t, gtotal: gtotal, m: $rootScope.user.mobile});
       },
-      place_order: function (cart, coupon, restaurant, type, address, payment_id, payment_amount, wallet_amount, mobile2, remarks){
-        var data = {cart: cart, coupon: null, restaurant_id: restaurant.id, mobile: $rootScope.user.mobile, type: type, address: address, payment_id: payment_id, payment_amount: payment_amount, wallet_amount: wallet_amount, mobile2: mobile2, remarks: remarks};
+      place_order: function (cart, coupon, restaurant, type, address, payment_id, payment_amount, wallet_amount, mobile2, remarks, tax_amt){
+        var data = {cart: cart, coupon: null, restaurant_id: restaurant.id, mobile: $rootScope.user.mobile, type: type, address: address, payment_id: payment_id, payment_amount: payment_amount, wallet_amount: wallet_amount, mobile2: mobile2, remarks: remarks, tax: tax_amt};
         if(coupon.applied == true) data.coupon = coupon.code;
         return $http.post(api_url+'/place_order', data);
       },

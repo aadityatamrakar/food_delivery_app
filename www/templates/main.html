@@ -25,15 +25,15 @@
     <!--</div>-->
 
     <div class="card" ng-hide="switch" style="margin: 5px 10px;">
-      <div class="item text-center"><b>SELECT LOCATION</b></div>
+      <div class="item text-center" style="background: #fff112"><b>SELECT LOCATION</b></div>
       <div class="item-body">
         <label class="item item-input" ng-click="openCityModal()">
           <span class="input-label"><b>City</b></span>
-          <input type="text" placeholder="Select City" readonly ng-model="selected.city.name" style="background-color: white;">
+          <input type="text" placeholder="Select City" readonly ng-model="selected.city.name">
         </label>
         <label class="item item-input" ng-click="openAreaModal()">
           <span class="input-label"><b>Area</b></span>
-          <input type="text" placeholder="Select Area" readonly ng-model="selected.area.name" style="background-color: white;">
+          <input type="text" placeholder="Select Area" readonly ng-model="selected.area.name" >
         </label>
       </div>
       <div class="item text-center switch_bg" style="color: #fff;" ng-click="selectOrderInfo('local')"><b>Show Restaurants</b></div>

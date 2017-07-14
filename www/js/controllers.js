@@ -58,7 +58,7 @@ angular.module('tromboy.controllers', ['underscore', 'ngCordova.plugins.inAppBro
             {
               $ionicPopup.alert({
                 title: "Error!",
-                template: s.data
+                template: "This is old version kindly update your app."
               }).then(function (){
                 navigator.app.exitApp();
               });
@@ -679,6 +679,7 @@ angular.module('tromboy.controllers', ['underscore', 'ngCordova.plugins.inAppBro
   })
   .controller('CartCtrl',   function ($rootScope, $scope, WebApi, $ionicPopup, $ionicLoading, $timeout, $state, $ionicHistory){
     $scope.cart = [];
+    $scope.tax_amt = 0;
     $scope.order_details = $scope.train = $scope.restaurant = [];
     $scope.cart_value = $scope.other_charges = $scope.gtotal = 0;
     $scope.editable = $scope.checkout_btn = $scope.coupon_t = false;
@@ -918,7 +919,7 @@ angular.module('tromboy.controllers', ['underscore', 'ngCordova.plugins.inAppBro
     $scope.place_order = function (address, mobile, mobile2, remarks){
       console.log('place order');
       $ionicLoading.show();
-      WebApi.place_order($scope.cart, $scope.coupon, $scope.restaurant, $scope.type, address, $scope.payment_id, $scope.payment_amount, $scope.wallet, mobile2, remarks)
+      WebApi.place_order($scope.cart, $scope.coupon, $scope.restaurant, $scope.type, address, $scope.payment_id, $scope.payment_amount, $scope.wallet, mobile2, remarks, $scope.tax_amt)
         .then(function (res){
           $ionicLoading.hide();
           WebApi.order(res.data);
@@ -985,11 +986,21 @@ angular.module('tromboy.controllers', ['underscore', 'ngCordova.plugins.inAppBro
         }else $scope.checkout_btn = true;
       }else $scope.checkout_btn = true;
       $scope.gtotal += $scope.cart_value+$scope.other_charges;
+
+      $scope.gst_rate = $scope.restaurant.gst_rate;
+      if($scope.gst_rate != null)
+      {
+        $scope.tax_amt = parseFloat(($scope.gtotal*$scope.gst_rate)/100).toFixed(2);
+        $scope.sgst = $scope.tax_amt/2;
+        $scope.gtotal = parseFloat($scope.gtotal+($scope.sgst*2)).toFixed(2);
+        $scope.gtotal = ($scope.gtotal*10)/10;
+      }
+
       if($scope.wallet > 0)
       {
         if($scope.wallet >= $scope.gtotal)
         {
-          $scope.wallet = $scope.gtotal;
+          $scope.wallet = $scope.gtotal.toFixed(2);
           $scope.gtotal = 0;
         }else{
           $scope.gtotal -= $scope.wallet;

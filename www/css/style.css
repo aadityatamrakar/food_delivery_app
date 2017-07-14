@@ -9,11 +9,40 @@
   line-height: 0 !important;
   border-bottom: 1px solid black !important;
 }
+ion-view.login.pane {
+    background: url(https://tromboy.com/doodle.jpg);
+    background-size: cover;
+}
+.button.button-assertive.button-outline.login_button {
+    background: #9d1f08;
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+}
+.card.profile_card {
+    padding: 46px 0;
+    margin: 0;
+    background: #fff112;
+}
+input#profile_old_pin, input#profile_new_pin, input#profile_new_pin_verify {
+    background: #fff112;
+    color: #000;
+}
+a.forget_pin {
+    color: #000;
+    font-weight: bold;
+}
+.card.login_card {
+    border-radius: 11px;
+    vertical-align: middle;
+    margin-top: 28%;
+    background: #FFF112;
+}
 .loginbg {
   background: url("../img/foodbg.jpg") no-repeat center;
 }
 .mainbg {
-  background: rgba(0,0,0,0.8);
+  background: url(https://tromboy.com/bg_food.jpg);
 }
 .mytitle{
   text-shadow: 0px 0px 5px white;
@@ -39,7 +68,7 @@ div.row{
   padding: 0px;
 }
 .cartBlue{
-  color: #0029c5;
+  color: #9d1f08;
 }
 .text-bold{
   font-weight: bold;
@@ -54,9 +83,10 @@ div.row{
   background-color: white;
 }
 .switch_bg{
-  background: #EB3349; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #EB3349 , #F45C43); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #EB3349 , #F45C43); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #9d1f08; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to left, #9d1f08 ,#9d1f08); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #9d1f08 , #9d1f08); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
 }
 
 .wrapper{
@@ -80,7 +110,7 @@ div.row{
   /*background: #ff4b1f;  !* fallback for old browsers *!*/
   /*background: -webkit-linear-gradient(to bottom, #ff9068, #ff4b1f);  !* Chrome 10-25, Safari 5.1-6 *!*/
   /*background: linear-gradient(to bottom, #ff9068, #ff4b1f); !* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ *!*/
-  background: url("../img/splash.gif") no-repeat;
+  background: url("../img/doodle.jpg") no-repeat;
   background-size: cover;
 }
 

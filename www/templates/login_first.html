@@ -1,28 +1,28 @@
-<ion-view class="">
+<ion-view class="login">
   <ion-nav-bar class="bar bar-assertive">
     <ion-nav-title>Login</ion-nav-title>
   </ion-nav-bar>
   <ion-content class="has-header">
 
-    <div class="card">
+    <div class="card login_card">
       <div class="item-body">
+      	<h4>Aleready Member?<br />Please Login With Your Detail</h4>
         <label class="item item-input item-stacked-label">
-          <span class="input-label">Mobile No.</span>
           <input type="number" id="login_mobile" onkeyup="if(document.getElementById('login_mobile').value.length == 10){ document.getElementById('login_pin').focus(); }" placeholder="Enter your registered mobile no." ng-model="login.mobile">
         </label>
         <label class="item item-input item-stacked-label">
-          <span class="input-label">PIN</span>
           <input type="number" style="-webkit-text-security: disc;" ng-model="login.pin" id="login_pin" placeholder="4 digit PIN">
         </label>
+        <button class="button button-assertive button-outline login_button" style="width: 70%; border-radius: 30px;" ng-click="login_submit()">Login</button>
+       <br />
+       <a class="forget_pin" ng-click="regen_pin()">Forgot PIN <i class="fa fa-arrow-right"></i></a>
+    
       </div>
     </div>
     <center>
-      <button class="button button-assertive button-outline" style="width: 70%; border-radius: 30px;" ng-click="login_submit()">Login</button>
       <br/><br/>
-      <p>Don't have an account ?</p>
-      <a style="font-size: 25px; text-decoration: none;" href="#/signup_form">Sign up <i class="fa fa-arrow-right"></i></a>
+      <a  class="button button-assertive button-outline login_button" href="#/signup_form">Sign up <i class="fa fa-arrow-right"></i></a>
       <br/><br/>
-      <a style="font-size: 25px; text-decoration: none;" ng-click="regen_pin()">Forgot PIN <i class="fa fa-arrow-right"></i></a>
-    </center>
+     </center>
   </ion-content>
 </ion-view>

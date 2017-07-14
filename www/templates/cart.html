@@ -67,6 +67,14 @@
       <ion-item ng-if="type == 'delivery' || type == 'train'">Delivery Charge <span class="pull-right cartBlue cartBlue text-bold" ng-if="restaurant.delivery_fee>0"><i class="fa fa-inr"></i> {{ restaurant.delivery_fee }}</span><span class="pull-right assertive text-bold" ng-if="restaurant.delivery_fee==null">Free</span></ion-item>
       <ion-item ng-if="type != 'dinein'">Packing Charge <span class="pull-right cartBlue cartBlue text-bold" ng-if="restaurant.packing_fee>0"><i class="fa fa-inr"></i> {{ restaurant.packing_fee }}</span><span class="pull-right assertive text-bold" ng-if="restaurant.packing_fee==null">Free</span></ion-item>
       <ion-item>
+        <span class="pull-left">SGST</span>
+        <span class="pull-right cartBlue" style="font-weight: bold;">(+) <i class="fa fa-inr"></i> {{ tax_amt/2 }}</span>
+      </ion-item>
+      <ion-item>
+        <span class="pull-left">CGST</span>
+        <span class="pull-right cartBlue" style="font-weight: bold;">(+) <i class="fa fa-inr"></i> {{ tax_amt/2 }}</span>
+      </ion-item>
+      <ion-item>
         <span class="pull-left">Wallet Amount</span>
         <span class="pull-right cartBlue" style="font-weight: bold;">(-) <i class="fa fa-inr"></i> {{ wallet }}</span>
       </ion-item>

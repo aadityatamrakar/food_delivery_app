@@ -5,6 +5,11 @@
   </ion-nav-buttons>
   <ion-floating-button ng-if="cart.length>0" ui-sref="app_b.tabs.cart" has-footer="true" button-color="#e42112" icon="ion-android-cart" icon-color="#fff"></ion-floating-button>
   <ion-content>
+    <ion-card ng-if="restaurants.length == 0">
+      <ion-item>
+        Currently, No restaurants delivering in this area.
+      </ion-item>
+    </ion-card>
     <ion-list ng-show="filter.status">
       <ion-item ng-show="filtered.length>0" class="item-divider">Filtered Restaurants ({{ filtered.length }}) <a class="pull-right assertive" ng-click="clearFilter()">Clear Filter</a></ion-item>
       <div ng-show="search_form" class="list list-inset">
